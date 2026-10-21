@@ -1,0 +1,6 @@
+{
+  "name": "MetaPulse — Estudio Cyberpunk de Metadatos MP3",
+  "description": "Plataforma futurista para autocompletar, editar e inyectar etiquetas ID3v2.3 y carátulas en archivos MP3, con explorador de metadatos de canciones, artistas y álbumes en tiempo real.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
