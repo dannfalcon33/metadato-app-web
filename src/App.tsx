@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
-  Disc3,
   ArrowDownRight,
   Cpu,
   FileCheck2,
@@ -10,6 +9,7 @@ import {
 import { CatalogTrackResult, NeonTheme } from './types/music';
 import { Mp3TaggerStudio } from './components/Mp3TaggerStudio';
 import { CatalogExplorer } from './components/CatalogExplorer';
+import { MetaPulseLogo } from './components/MetaPulseLogo';
 
 const NEON_THEMES: Array<{
   id: NeonTheme;
@@ -35,6 +35,11 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-neon-theme', activeTheme);
+    const currentThemeObj = NEON_THEMES.find((t) => t.id === activeTheme);
+    const metaThemeColor = document.getElementById('meta-theme-color');
+    if (metaThemeColor && currentThemeObj) {
+      metaThemeColor.setAttribute('content', currentThemeObj.hex);
+    }
   }, [activeTheme]);
 
   const scrollToSection = (id: string) => {
@@ -49,12 +54,13 @@ export default function App() {
       {/* Top Bar Contract: Strictly 3 zones separated by gap-8 */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-[#080B10]/85 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-8 px-6 py-4">
-          {/* Zone 1: Single text element wordmark */}
+          {/* Zone 1: Brand Lockup (Custom Logo + Single Wordmark) */}
           <a
             href="#inicio"
-            className="text-xl font-bold tracking-tight text-white font-display whitespace-nowrap shrink-0"
+            className="flex items-center gap-3 text-xl font-bold tracking-tight text-white font-display whitespace-nowrap shrink-0"
           >
-            MetaPulse
+            <MetaPulseLogo className="w-8 h-8" />
+            <span>MetaPulse</span>
           </a>
 
           {/* Zone 2: 4 concise single-line text navigation links */}
@@ -106,7 +112,7 @@ export default function App() {
             <div className="flex items-center gap-2 text-xs text-slate-300">
               <Palette className="w-4 h-4 neon-text shrink-0" />
               <span className="font-medium">
-                Tema Cyberpunk Global (afecta toda la web y el estudio de metadatos):
+                Tema Cyberpunk Global (afecta toda la web, el logo y el estudio de metadatos):
               </span>
             </div>
 
@@ -137,7 +143,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Hero Section: 2-Column Split + Full-Width KPI Strip Below */}
+        {/* Hero Section */}
         <section className="py-16 lg:py-20 border-b border-white/10">
           <div className="max-w-[1280px] mx-auto px-6">
             <motion.div
@@ -147,7 +153,10 @@ export default function App() {
               transition={revealTransition}
               className="max-w-4xl mb-12"
             >
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono-tabular neon-text mb-4">
+              <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono-tabular neon-text mb-4">
+                <MetaPulseLogo className="w-5 h-5" />
+                <span>METAPULSE AUDIO LAB</span>
+                <span aria-hidden="true">·</span>
                 <span>MOTOR DE RECONOCIMIENTO Y ETIQUETADO BINARIO MP3</span>
                 <span aria-hidden="true">·</span>
                 <span>ID3v2.3 + USLT + APIC 600×600</span>
@@ -205,7 +214,7 @@ export default function App() {
               </div>
             </motion.div>
 
-            {/* Full-Width 4-Column Technical Specification Strip Below Hero Split */}
+            {/* Full-Width 4-Column Technical Specification Strip Below Hero */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-8 border-t border-white/10">
               {[
                 {
@@ -417,6 +426,7 @@ export default function App() {
       <footer className="py-10 bg-[#06080C]">
         <div className="max-w-[1280px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
+            <MetaPulseLogo className="w-7 h-7" />
             <span className="font-display font-bold text-white text-base">
               MetaPulse
             </span>

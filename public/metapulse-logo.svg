@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="mp-bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D131D" />
+      <stop offset="100%" stop-color="#06080D" />
+    </linearGradient>
+    <linearGradient id="mp-neon" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FF66" />
+      <stop offset="55%" stop-color="#00D4FF" />
+      <stop offset="100%" stop-color="#B855FF" />
+    </linearGradient>
+  </defs>
+
+  <!-- Octagonal Cyberpunk Chassis -->
+  <polygon
+    points="36,8 92,8 120,36 120,92 92,120 36,120 8,92 8,36"
+    fill="url(#mp-bg)"
+    stroke="url(#mp-neon)"
+    stroke-width="4"
+  />
+
+  <!-- Inner Acoustic Vinyl Grooves -->
+  <circle
+    cx="64"
+    cy="64"
+    r="40"
+    stroke="url(#mp-neon)"
+    stroke-width="1.75"
+    stroke-dasharray="6 5"
+    stroke-opacity="0.65"
+  />
+  <circle
+    cx="64"
+    cy="64"
+    r="29"
+    stroke="#F1F5F9"
+    stroke-width="1.25"
+    stroke-opacity="0.22"
+  />
+
+  <!-- High-Precision Pulse Waveform Monogram ("M" + Audio Pulse) -->
+  <path
+    d="M24 66 H36 L44 42 L54 84 L64 32 L74 84 L84 42 L92 66 H104"
+    stroke="url(#mp-neon)"
+    stroke-width="5.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Center Spindle Node -->
+  <circle cx="64" cy="64" r="5" fill="#00FF66" />
+</svg>

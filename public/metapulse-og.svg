@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="og-bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070A10" />
+      <stop offset="100%" stop-color="#0E1420" />
+    </linearGradient>
+    <linearGradient id="og-neon" x1="100" y1="100" x2="1100" y2="530" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FF66" />
+      <stop offset="50%" stop-color="#00D4FF" />
+      <stop offset="100%" stop-color="#B855FF" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#og-bg)" />
+
+  <!-- Subtle Grid Lines -->
+  <path d="M0 126 H1200 M0 252 H1200 M0 378 H1200 M0 504 H1200" stroke="#FFFFFF" stroke-opacity="0.04" stroke-width="1" />
+  <path d="M240 0 V630 M480 0 V630 M720 0 V630 M960 0 V630" stroke="#FFFFFF" stroke-opacity="0.04" stroke-width="1" />
+
+  <!-- Border Frame -->
+  <rect x="44" y="44" width="1112" height="542" rx="24" stroke="url(#og-neon)" stroke-width="2" stroke-opacity="0.5" />
+
+  <!-- Logo Emblem -->
+  <g transform="translate(96, 165) scale(1.4)">
+    <polygon
+      points="36,8 92,8 120,36 120,92 92,120 36,120 8,92 8,36"
+      fill="#0B1018"
+      stroke="url(#og-neon)"
+      stroke-width="4"
+    />
+    <circle cx="64" cy="64" r="40" stroke="url(#og-neon)" stroke-width="1.75" stroke-dasharray="6 5" stroke-opacity="0.65" />
+    <path
+      d="M24 66 H36 L44 42 L54 84 L64 32 L74 84 L84 42 L92 66 H104"
+      stroke="url(#og-neon)"
+      stroke-width="5.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="310" y="255" fill="#00FF66" font-family="monospace" font-size="22" font-weight="600" letter-spacing="3">
+    ID3v2.3 + USLT LYRICS + APIC 600×600
+  </text>
+  <text x="310" y="335" fill="#FFFFFF" font-family="sans-serif" font-size="68" font-weight="700">
+    MetaPulse
+  </text>
+  <text x="310" y="395" fill="#94A3B8" font-family="sans-serif" font-size="28" font-weight="400">
+    Estudio Cyberpunk de Metadatos MP3 e Inspector Discográfico
+  </text>
+</svg>

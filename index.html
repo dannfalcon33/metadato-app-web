@@ -3,15 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Web Identity & Brand Metadata -->
     <title>MetaPulse — Estudio Cyberpunk de Metadatos MP3</title>
-    <meta name="description" content="Plataforma futurista para autocompletar, editar e inyectar etiquetas ID3v2.3 y carátulas en archivos MP3, con explorador de metadatos de canciones, artistas y álbumes en tiempo real." />
-    <meta property="og:title" content="MetaPulse — Estudio Cyberpunk de Metadatos MP3" />
-    <meta property="og:description" content="Plataforma futurista para autocompletar, editar e inyectar etiquetas ID3v2.3 y carátulas en archivos MP3, con explorador de metadatos de canciones, artistas y álbumes en tiempo real." />
+    <meta name="application-name" content="MetaPulse" />
+    <meta name="apple-mobile-web-app-title" content="MetaPulse" />
+    <meta name="author" content="MetaPulse Audio Lab" />
+    <meta name="generator" content="MetaPulse ID3v2.3 Binary Engine" />
+    <meta
+      name="description"
+      content="Plataforma futurista para autocompletar, editar e inyectar etiquetas ID3v2.3, letras USLT y carátulas en archivos MP3, con buscador discográfico en vivo."
+    />
+    <meta
+      name="keywords"
+      content="MetaPulse, editor metadatos MP3, ID3v2.3, etiquetas MP3, caratula APIC, letras USLT, buscador musical, discografia, cyberpunk"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#00FF66" id="meta-theme-color" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Brand Logo & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/metapulse-logo.svg" />
+    <link rel="shortcut icon" href="/metapulse-logo.svg" />
+    <link rel="apple-touch-icon" href="/metapulse-logo.svg" />
+
+    <!-- OpenGraph Social Identity Metadata -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MetaPulse" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content="MetaPulse — Estudio Cyberpunk de Metadatos MP3" />
+    <meta
+      property="og:description"
+      content="Carga archivos MP3 sin etiquetas, autocompleta su carátula 600×600, letra USLT y datos desde la red, y descárgalos con cabecera ID3v2.3."
+    />
+    <meta property="og:image" content="/metapulse-og.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Logo e interfaz de MetaPulse — Estudio Cyberpunk de Metadatos MP3"
+    />
+
+    <!-- Twitter / X Card Identity Metadata -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MetaPulse — Estudio Cyberpunk de Metadatos MP3" />
+    <meta
+      name="twitter:description"
+      content="Autocompleta etiquetas ID3v2.3, letras USLT y carátulas oficiales en tus archivos MP3 o explora discografías en tiempo real."
+    />
+    <meta name="twitter:image" content="/metapulse-og.svg" />
+    <meta name="twitter:image:alt" content="Logo de MetaPulse Audio Lab" />
+
+    <!-- Schema.org Structured Data (JSON-LD) for Web Identity & Logo -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "MetaPulse",
+        "alternateName": "MetaPulse — Estudio Cyberpunk de Metadatos MP3",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "inLanguage": "es",
+        "image": "/metapulse-og.svg",
+        "logo": "/metapulse-logo.svg",
+        "description": "Plataforma web cyberpunk para autocompletar, editar e inyectar etiquetas binarias ID3v2.3, letras USLT y carátulas APIC en archivos MP3, con explorador de metadatos de canciones, artistas y álbumes.",
+        "featureList": [
+          "Autocompletado automático de metadatos MP3 desde el nombre del archivo",
+          "Inyección binaria de etiquetas ID3v2.3 UTF-16 sin recodificar el audio",
+          "Incrustación de letras de canciones en trama USLT y carátulas APIC 600x600",
+          "Buscador técnico de canciones, artistas, discografías y álbumes",
+          "Selector global de 4 temas neón cyberpunk (Verde, Rojo, Azul y Morado)"
+        ],
+        "author": {
+          "@type": "Organization",
+          "name": "MetaPulse Audio Lab",
+          "logo": "/metapulse-logo.svg"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-[#090B10] text-[#F1F5F9] antialiased selection:bg-[var(--neon-primary)] selection:text-[#090B10]">
     <div id="root"></div>
