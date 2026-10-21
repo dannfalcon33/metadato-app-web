@@ -12,6 +12,12 @@
     --surface-canvas: #080b10;
     --surface-card: #0e131b;
     --surface-elevated: #131a24;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --radius-card: 0.75rem;
+    --radius-control: 0.5rem;
+    --transition-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   [data-neon-theme="red"] {
@@ -53,7 +59,7 @@
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--surface-canvas);
-    color: #f1f5f9;
+    color: var(--text-primary);
     letter-spacing: 0.01em;
     overflow-x: hidden;
   }
@@ -66,6 +72,15 @@
     font-family: 'JetBrains Mono', monospace;
     font-variant-numeric: tabular-nums;
   }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--neon-primary);
+    outline-offset: 2px;
+  }
 }
 
 .cyber-grid-bg {
@@ -77,7 +92,7 @@
 
 .neon-border-subtle {
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .neon-border-subtle:hover {
@@ -93,7 +108,7 @@
   background-color: var(--neon-primary);
   color: #07090e;
   font-weight: 600;
-  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
 .neon-btn-primary:hover {
@@ -115,4 +130,15 @@
 
 .balance-text {
   text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

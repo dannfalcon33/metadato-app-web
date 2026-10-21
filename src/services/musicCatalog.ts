@@ -114,23 +114,24 @@ Nada más queda`,
 };
 
 /**
- * Fetches unsynchronized song lyrics from public databases (LRCLIB / Lyrics.ovh) with instant fallback
+ * Fetches unsynchronized song lyrics from public databases (LRCLIB / Lyrics.ovh) with AbortSignal support and fallback
  */
 export async function fetchTrackLyricsOnline(
   artist: string,
-  title: string
+  title: string,
+  signal?: AbortSignal
 ): Promise<string> {
   const cleanArtist = artist.trim();
   const cleanTitle = title.replace(/\s*\([^)]*\)/g, '').trim();
 
   if (!cleanTitle) return '';
 
-  // 1. Try LRCLIB API (fast, CORS-enabled public lyrics database)
+  // 1. Try LRCLIB API
   try {
     const lrcUrl = `https://lrclib.net/api/search?track_name=${encodeURIComponent(
       cleanTitle
     )}&artist_name=${encodeURIComponent(cleanArtist)}`;
-    const res = await fetch(lrcUrl);
+    const res = await fetch(lrcUrl, { signal });
     if (res.ok) {
       const list = await res.json();
       if (Array.isArray(list) && list.length > 0) {
@@ -146,8 +147,8 @@ export async function fetchTrackLyricsOnline(
         }
       }
     }
-  } catch {
-    // Continue to next source
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err;
   }
 
   // 2. Try lyrics.ovh API
@@ -156,15 +157,15 @@ export async function fetchTrackLyricsOnline(
       const ovhUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(
         cleanArtist
       )}/${encodeURIComponent(cleanTitle)}`;
-      const res = await fetch(ovhUrl);
+      const res = await fetch(ovhUrl, { signal });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data.lyrics === 'string' && data.lyrics.trim()) {
           return data.lyrics.replace(/^Paroles de la chanson[^\n]*\n+/i, '').trim();
         }
       }
-    } catch {
-      // Continue to curated fallback
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError') throw err;
     }
   }
 
@@ -179,7 +180,7 @@ export async function fetchTrackLyricsOnline(
   return `[Letra para "${cleanArtist ? `${cleanArtist} — ` : ''}${cleanTitle}"]\nEscribe o pega aquí la letra completa para incrustarla en la trama binaria USLT del archivo MP3.`;
 }
 
-const CURATED_FALLBACK_TRACKS: CatalogTrackResult[] = [
+export const CURATED_FALLBACK_TRACKS: CatalogTrackResult[] = [
   {
     trackId: 310657084,
     title: 'Losing My Religion',
@@ -259,19 +260,23 @@ const CURATED_FALLBACK_TRACKS: CatalogTrackResult[] = [
 ];
 
 /**
- * Searches the live iTunes catalog for tracks matching the query
+ * Searches the live iTunes catalog for tracks matching the query, supporting AbortSignal
  */
-export async function searchTracksOnline(query: string, limit = 12): Promise<CatalogTrackResult[]> {
+export async function searchTracksOnline(
+  query: string,
+  limit = 12,
+  signal?: AbortSignal
+): Promise<CatalogTrackResult[]> {
   const clean = query.trim();
   if (!clean) return CURATED_FALLBACK_TRACKS;
 
   try {
     const url = `https://itunes.apple.com/search?term=${encodeURIComponent(clean)}&entity=song&limit=${limit}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal });
     if (!res.ok) throw new Error('Network response not ok');
     const data = await res.json();
 
-    if (Array.isArray(data.results) && data.results.length > 0) {
+    if (Array.isArray(data.results)) {
       return data.results.map((item: Record<string, unknown>) => {
         const releaseDateStr = String(item.releaseDate || '');
         const year = releaseDateStr ? releaseDateStr.slice(0, 4) : '';
@@ -297,30 +302,33 @@ export async function searchTracksOnline(query: string, limit = 12): Promise<Cat
         };
       });
     }
-  } catch {
-    // Fallback to curated local matches
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err;
   }
 
   const lower = clean.toLowerCase();
-  const filtered = CURATED_FALLBACK_TRACKS.filter(
+  return CURATED_FALLBACK_TRACKS.filter(
     (t) =>
       t.title.toLowerCase().includes(lower) ||
       t.artist.toLowerCase().replace(/\./g, '').includes(lower.replace(/\./g, '')) ||
       t.album.toLowerCase().includes(lower)
   );
-  return filtered.length > 0 ? filtered : CURATED_FALLBACK_TRACKS;
 }
 
 /**
- * Searches albums in the live catalog
+ * Searches albums in the live catalog with AbortSignal support
  */
-export async function searchAlbumsOnline(query: string, limit = 12): Promise<CatalogAlbumResult[]> {
+export async function searchAlbumsOnline(
+  query: string,
+  limit = 12,
+  signal?: AbortSignal
+): Promise<CatalogAlbumResult[]> {
   const clean = query.trim();
   if (!clean) return [];
 
   try {
     const url = `https://itunes.apple.com/search?term=${encodeURIComponent(clean)}&entity=album&limit=${limit}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal });
     if (!res.ok) throw new Error('Network error');
     const data = await res.json();
 
@@ -342,11 +350,16 @@ export async function searchAlbumsOnline(query: string, limit = 12): Promise<Cat
         };
       });
     }
-  } catch {
-    // Return fallback albums derived from curated tracks
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err;
   }
 
-  return CURATED_FALLBACK_TRACKS.map((t) => ({
+  const lower = clean.toLowerCase();
+  return CURATED_FALLBACK_TRACKS.filter(
+    (t) =>
+      t.album.toLowerCase().includes(lower) ||
+      t.artist.toLowerCase().replace(/\./g, '').includes(lower.replace(/\./g, ''))
+  ).map((t) => ({
     collectionId: t.collectionId || t.trackId,
     album: t.album,
     artist: t.artist,
@@ -364,13 +377,16 @@ export async function searchAlbumsOnline(query: string, limit = 12): Promise<Cat
 /**
  * Fetches complete album tracklist & metadata by collectionId
  */
-export async function fetchAlbumTracklist(collectionId: number): Promise<{
+export async function fetchAlbumTracklist(
+  collectionId: number,
+  signal?: AbortSignal
+): Promise<{
   albumInfo: CatalogAlbumResult | null;
   tracks: CatalogTrackResult[];
 }> {
   try {
     const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=song`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal });
     if (!res.ok) throw new Error('Lookup failed');
     const data = await res.json();
 
@@ -425,8 +441,8 @@ export async function fetchAlbumTracklist(collectionId: number): Promise<{
 
       return { albumInfo, tracks };
     }
-  } catch {
-    // ignore
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err;
   }
 
   return { albumInfo: null, tracks: [] };
@@ -435,14 +451,17 @@ export async function fetchAlbumTracklist(collectionId: number): Promise<{
 /**
  * Fetches rich artist profile including discography albums and top tracks
  */
-export async function searchArtistProfileOnline(query: string): Promise<CatalogArtistResult[]> {
+export async function searchArtistProfileOnline(
+  query: string,
+  signal?: AbortSignal
+): Promise<CatalogArtistResult[]> {
   const clean = query.trim();
   if (!clean) return [];
 
   try {
     const [albums, tracks] = await Promise.all([
-      searchAlbumsOnline(clean, 16),
-      searchTracksOnline(clean, 16),
+      searchAlbumsOnline(clean, 16, signal),
+      searchTracksOnline(clean, 16, signal),
     ]);
 
     const artistMap = new Map<string, CatalogArtistResult>();
@@ -482,7 +501,8 @@ export async function searchArtistProfileOnline(query: string): Promise<CatalogA
     }
 
     return Array.from(artistMap.values()).slice(0, 6);
-  } catch {
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err;
     return [];
   }
 }

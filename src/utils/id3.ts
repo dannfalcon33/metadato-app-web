@@ -1,5 +1,36 @@
 import { Id3FrameSummary, Mp3Metadata } from '../types/music';
 
+export interface PreservedId3Frame {
+  frameId: string;
+  rawFrameBytes: Uint8Array;
+}
+
+export interface PostWriteVerificationResult {
+  verified: boolean;
+  id3Version: string;
+  verifiedFramesCount: number;
+  verifiedTitle: string;
+  verifiedArtist: string;
+  hasCoverArt: boolean;
+  hasLyrics: boolean;
+  totalFileSizeBytes: number;
+}
+
+const MANAGED_FRAME_IDS = new Set([
+  'TIT2',
+  'TPE1',
+  'TALB',
+  'TYER',
+  'TDRC',
+  'TRCK',
+  'TCON',
+  'TCOM',
+  'TPUB',
+  'COMM',
+  'USLT',
+  'APIC',
+]);
+
 /**
  * Decodes synchsafe 28-bit integer used in ID3v2 header sizes
  */
@@ -65,11 +96,9 @@ function decodeId3Text(payload: Uint8Array): string {
 function decodeDescriptorTextFrame(payload: Uint8Array): string {
   if (payload.length <= 4) return '';
   const encoding = payload[0];
-  // Skip encoding (1) + language (3)
   let p = 4;
 
   if (encoding === 1 || encoding === 2) {
-    // UTF-16 descriptor ends with 0x00 0x00 aligned after BOM/chars
     while (p + 1 < payload.length) {
       if (payload[p] === 0x00 && payload[p + 1] === 0x00) {
         p += 2;
@@ -78,7 +107,6 @@ function decodeDescriptorTextFrame(payload: Uint8Array): string {
       p += 2;
     }
   } else {
-    // Single-byte null terminator
     while (p < payload.length && payload[p] !== 0x00) {
       p++;
     }
@@ -99,7 +127,6 @@ function decodeDescriptorTextFrame(payload: Uint8Array): string {
 function encodeUtf16LeWithBom(text: string): Uint8Array {
   const clean = text.trim();
   const out = new Uint8Array(2 + clean.length * 2);
-  // BOM 0xFF 0xFE for UTF-16LE
   out[0] = 0xff;
   out[1] = 0xfe;
   for (let i = 0; i < clean.length; i++) {
@@ -111,21 +138,23 @@ function encodeUtf16LeWithBom(text: string): Uint8Array {
 }
 
 /**
- * Reads existing ID3v2.3/v2.4 or ID3v1 tags from an MP3 ArrayBuffer
+ * Reads existing ID3v2.3/v2.4 or ID3v1 tags from an MP3 ArrayBuffer,
+ * and collects any unmanaged ID3v2.3 frames so they can be preserved on write.
  */
 export function readMp3Metadata(buffer: ArrayBuffer): {
   metadata: Partial<Mp3Metadata>;
   hasExistingTags: boolean;
   audioDataOffset: number;
   id3Version: string;
+  preservedFrames: PreservedId3Frame[];
 } {
   const bytes = new Uint8Array(buffer);
   const metadata: Partial<Mp3Metadata> = {};
+  const preservedFrames: PreservedId3Frame[] = [];
   let hasExistingTags = false;
   let audioDataOffset = 0;
   let id3Version = 'Sin cabecera ID3';
 
-  // Check for "ID3" magic header
   if (
     bytes.length >= 10 &&
     bytes[0] === 0x49 && // 'I'
@@ -192,13 +221,13 @@ export function readMp3Metadata(buffer: ArrayBuffer): {
         if (metadata.lyrics) hasExistingTags = true;
       } else if (frameId === 'APIC' && payload.length > 12) {
         try {
-          let p = 1; // skip encoding
+          let p = 1;
           let mimeEnd = p;
           while (mimeEnd < payload.length && payload[mimeEnd] !== 0) mimeEnd++;
           const mime =
             new TextDecoder('iso-8859-1').decode(payload.subarray(p, mimeEnd)) || 'image/jpeg';
           p = mimeEnd + 1;
-          p += 1; // picture type
+          p += 1;
           while (p < payload.length && payload[p] !== 0) p++;
           while (p < payload.length && payload[p] === 0) p++;
           if (p < payload.length) {
@@ -212,6 +241,12 @@ export function readMp3Metadata(buffer: ArrayBuffer): {
         } catch {
           // ignore malformed APIC
         }
+      } else if (versionMajor === 3 && !MANAGED_FRAME_IDS.has(frameId)) {
+        // Preserve unmanaged ID3v2.3 frames (e.g., TBPM, TKEY, TCOP, WXXX) intact
+        preservedFrames.push({
+          frameId,
+          rawFrameBytes: bytes.slice(offset, offset + 10 + frameSize),
+        });
       }
 
       offset += 10 + frameSize;
@@ -239,7 +274,13 @@ export function readMp3Metadata(buffer: ArrayBuffer): {
     }
   }
 
-  return { metadata, hasExistingTags, audioDataOffset, id3Version };
+  return {
+    metadata,
+    hasExistingTags,
+    audioDataOffset,
+    id3Version,
+    preservedFrames,
+  };
 }
 
 /**
@@ -276,7 +317,6 @@ function createDescriptorFrame(
   if (!clean) return null;
 
   const encodedBody = encodeUtf16LeWithBom(clean);
-  // 1 byte encoding (0x01) + 3 bytes language ('eng') + 4 bytes empty UTF-16 descriptor (FF FE 00 00) + encodedBody
   const payloadSize = 1 + 3 + 4 + encodedBody.length;
   const frame = new Uint8Array(10 + payloadSize);
 
@@ -291,7 +331,6 @@ function createDescriptorFrame(
   frame[11] = 'e'.charCodeAt(0);
   frame[12] = 'n'.charCodeAt(0);
   frame[13] = 'g'.charCodeAt(0);
-  // Empty content descriptor in UTF-16LE with null terminator
   frame[14] = 0xff;
   frame[15] = 0xfe;
   frame[16] = 0x00;
@@ -334,7 +373,10 @@ function createApicFrame(imageBytes: Uint8Array, mimeType = 'image/jpeg'): Uint8
 /**
  * Computes the exact ID3v2.3 frame breakdown for live inspection in the UI
  */
-export function inspectId3Frames(metadata: Mp3Metadata): Id3FrameSummary[] {
+export function inspectId3Frames(
+  metadata: Mp3Metadata,
+  preservedFrames: PreservedId3Frame[] = []
+): Id3FrameSummary[] {
   const frames: Id3FrameSummary[] = [];
 
   const textMappings: Array<{ id: string; desc: string; val: string }> = [
@@ -403,6 +445,15 @@ export function inspectId3Frames(metadata: Mp3Metadata): Id3FrameSummary[] {
     });
   }
 
+  for (const pFrame of preservedFrames) {
+    frames.push({
+      frameId: pFrame.frameId,
+      description: 'Trama original preservada',
+      valuePreview: 'Conservada del archivo original',
+      byteSize: pFrame.rawFrameBytes.byteLength,
+    });
+  }
+
   return frames;
 }
 
@@ -426,13 +477,14 @@ export async function fetchCoverBytesFromUrl(url: string): Promise<{ bytes: Uint
 }
 
 /**
- * Writes complete ID3v2.3 binary tags (including USLT lyrics & APIC cover art) into the original MP3 buffer and returns a Blob
+ * Writes complete ID3v2.3 binary tags (including USLT lyrics, APIC cover art, and preserved frames)
+ * into the original MP3 buffer and returns a Blob
  */
 export async function writeMp3MetadataToBlob(
   originalBuffer: ArrayBuffer,
   metadata: Mp3Metadata
 ): Promise<Blob> {
-  const { audioDataOffset } = readMp3Metadata(originalBuffer);
+  const { audioDataOffset, preservedFrames } = readMp3Metadata(originalBuffer);
   const rawAudioBytes = new Uint8Array(originalBuffer, audioDataOffset);
 
   const frameBuffers: Uint8Array[] = [];
@@ -466,6 +518,11 @@ export async function writeMp3MetadataToBlob(
     pushIfValid(createApicFrame(coverBytes, coverMime));
   }
 
+  // Append any preserved original frames that were not overwritten
+  for (const preserved of preservedFrames) {
+    frameBuffers.push(preserved.rawFrameBytes);
+  }
+
   const framesTotalLength = frameBuffers.reduce((acc, b) => acc + b.byteLength, 0);
   const paddingSize = 64;
   const totalTagPayloadSize = framesTotalLength + paddingSize;
@@ -491,6 +548,45 @@ export async function writeMp3MetadataToBlob(
   finalFileBytes.set(rawAudioBytes, 10 + totalTagPayloadSize);
 
   return new Blob([finalFileBytes], { type: 'audio/mpeg' });
+}
+
+/**
+ * Re-reads a generated MP3 Blob to verify that the written ID3v2.3 header and frames
+ * are intact and readable (Section 7 & 15 Post-Write Verification).
+ */
+export async function verifyWrittenMp3Blob(
+  blob: Blob
+): Promise<PostWriteVerificationResult> {
+  const buffer = await blob.arrayBuffer();
+  const parsed = readMp3Metadata(buffer);
+
+  let verifiedFramesCount = parsed.preservedFrames.length;
+  if (parsed.metadata.title) verifiedFramesCount++;
+  if (parsed.metadata.artist) verifiedFramesCount++;
+  if (parsed.metadata.album) verifiedFramesCount++;
+  if (parsed.metadata.year) verifiedFramesCount++;
+  if (parsed.metadata.trackNumber) verifiedFramesCount++;
+  if (parsed.metadata.genre) verifiedFramesCount++;
+  if (parsed.metadata.composer) verifiedFramesCount++;
+  if (parsed.metadata.publisher) verifiedFramesCount++;
+  if (parsed.metadata.comment) verifiedFramesCount++;
+  if (parsed.metadata.lyrics) verifiedFramesCount++;
+  if (parsed.metadata.coverBytes && parsed.metadata.coverBytes.length > 0) {
+    verifiedFramesCount++;
+  }
+
+  return {
+    verified: parsed.id3Version.startsWith('ID3v2.3') && verifiedFramesCount > 0,
+    id3Version: parsed.id3Version,
+    verifiedFramesCount,
+    verifiedTitle: parsed.metadata.title || '',
+    verifiedArtist: parsed.metadata.artist || '',
+    hasCoverArt: Boolean(
+      parsed.metadata.coverBytes && parsed.metadata.coverBytes.length > 0
+    ),
+    hasLyrics: Boolean(parsed.metadata.lyrics),
+    totalFileSizeBytes: blob.size,
+  };
 }
 
 /**
