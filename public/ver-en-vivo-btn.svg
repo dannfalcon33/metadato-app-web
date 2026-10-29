@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="48" viewBox="0 0 280 48" fill="none">
+  <defs>
+    <linearGradient id="rgbBtnGrad" x1="0" y1="0" x2="280" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FF66"/>
+      <stop offset="35%" stop-color="#00D4FF"/>
+      <stop offset="70%" stop-color="#B855FF"/>
+      <stop offset="100%" stop-color="#FF2A54"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="278" height="46" rx="10" fill="#080B12" stroke="url(#rgbBtnGrad)" stroke-width="2"/>
+  <circle cx="28" cy="24" r="6" fill="#00FF66"/>
+  <text x="48" y="29" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" letter-spacing="0.4">
+    VER EN VIVO · metapulse.falconit.xyz
+  </text>
+</svg>

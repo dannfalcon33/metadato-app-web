@@ -1,12 +1,16 @@
 # MetaPulse — Estudio Cyberpunk de Metadatos MP3 e Inspector Musical
 
+[![Ver en Vivo — metapulse.falconit.xyz](public/ver-en-vivo-btn.svg)](https://metapulse.falconit.xyz/)
+
+🔗 **Aplicación en vivo:** **[Ver en Vivo — https://metapulse.falconit.xyz/](https://metapulse.falconit.xyz/)**
+
 **MetaPulse** es una aplicación web organizada en vistas dedicadas con estética de estudio musical e iluminación dinámica **RGB multicolor** para analizar, autocompletar, editar e inyectar etiquetas binarias **ID3v2.3**, letras de canciones (**USLT**) y carátulas (**APIC 600×600 px**) directamente en archivos `.mp3`, acompañada de un buscador discográfico de canciones, artistas y álbumes.
 
 ---
 
 ## Vista General de la Plataforma
 
-![Vista Principal de MetaPulse — Estudio Cyberpunk de Metadatos MP3](public/assets/aistudio/MetaPulse___Estudio_Cyberpunk_de_Metadatos_MP3_feeefafa.png)
+[![Vista Principal de MetaPulse — Estudio Cyberpunk de Metadatos MP3](public/assets/aistudio/MetaPulse___Estudio_Cyberpunk_de_Metadatos_MP3_feeefafa.png)](https://metapulse.falconit.xyz/)
 
 ### Desglose Visual de Cómo Funciona la Interfaz (según la captura superior)
 
