@@ -7,7 +7,6 @@ import {
   FileAudio,
   Search,
   Sparkles,
-  FileText,
   Image,
   Download,
   Sliders,
@@ -22,60 +21,35 @@ const revealTransition = {
 export const HomePage: React.FC = () => {
   return (
     <div>
-      {/* 1. Hero Principal con Ambiente Visual de Estudio */}
-      <section className="relative py-16 lg:py-22 border-b border-white/10 overflow-hidden">
-        {/* Ambient Studio SVG Backdrop (Static-friendly & Reduced-Motion Safe) */}
+      {/* 1. Hero Principal Centrado con Fondo Negro, Burbuja Gradiente RGB Arcoíris y Ondas Pulsantes Suaves */}
+      <section className="relative bg-black py-24 lg:py-32 border-b border-white/10 overflow-hidden">
+        {/* Pure Black Backdrop + Rainbow RGB Morphing Bubble + Soft Pulsing Concentric Waves */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden opacity-25"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
         >
-          <svg
-            viewBox="0 0 1440 560"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-full object-cover"
-          >
-            <circle
-              cx="1180"
-              cy="260"
-              r="260"
-              stroke="var(--neon-primary)"
-              strokeWidth="1.2"
-              strokeDasharray="8 8"
-            />
-            <circle
-              cx="1180"
-              cy="260"
-              r="190"
-              stroke="rgba(255,255,255,0.15)"
-              strokeWidth="1"
-            />
-            <circle
-              cx="1180"
-              cy="260"
-              r="120"
-              stroke="var(--neon-primary)"
-              strokeWidth="1"
-              strokeOpacity="0.5"
-            />
-            <path
-              d="M0 420 Q 360 340, 720 420 T 1440 390"
-              stroke="var(--neon-primary)"
-              strokeWidth="1.5"
-              strokeOpacity="0.4"
-            />
-          </svg>
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface-canvas)] via-transparent to-[var(--surface-canvas)]" />
+          {/* Rainbow RGB Gradient Bubble */}
+          <div className="rgb-hero-bubble" />
+          <div className="rgb-hero-bubble-inner" />
+
+          {/* Soft Pulsing Waves Radiating from Center */}
+          <div className="rgb-pulse-wave" />
+          <div className="rgb-pulse-wave rgb-pulse-wave-delay-1" />
+          <div className="rgb-pulse-wave rgb-pulse-wave-delay-2" />
+
+          {/* Subtle radial vignette to keep pure black edges and high text contrast */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_15%,#000000_78%)]" />
         </div>
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6">
+          {/* Centered Hero Titles & CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={revealTransition}
-            className="max-w-3xl mb-12"
+            className="max-w-3xl mx-auto text-center flex flex-col items-center mb-16"
           >
-            <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono-tabular neon-text mb-4">
+            <div className="inline-flex flex-wrap items-center justify-center gap-2.5 text-xs font-mono-tabular neon-text mb-5">
               <MetaPulseLogo className="w-5 h-5" />
               <span>METAPULSE AUDIO LAB</span>
               <span aria-hidden="true">·</span>
@@ -85,14 +59,14 @@ export const HomePage: React.FC = () => {
             <h1
               className="font-display font-bold tracking-tight text-white balance-text mb-6"
               style={{
-                fontSize: 'clamp(2.25rem, 4vw, 3.75rem)',
+                fontSize: 'clamp(2.35rem, 4.5vw, 4rem)',
                 lineHeight: 1.08,
               }}
             >
               Completa etiquetas, carátulas y letras de tus archivos MP3 en un entorno dedicado
             </h1>
 
-            <p className="text-base text-slate-300 leading-relaxed max-w-[66ch] mb-8">
+            <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-[62ch] mb-9">
               MetaPulse separa la edición binaria de archivos MP3 y la consulta
               discográfica en herramientas enfocadas. Carga un archivo como{' '}
               <span className="text-white font-mono-tabular">
@@ -102,10 +76,10 @@ export const HomePage: React.FC = () => {
               nueva cabecera ID3v2.3 sin recodificar el audio.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-7">
               <Link
                 to="/editor"
-                className="px-6 py-3.5 rounded-lg neon-btn-primary text-sm flex items-center gap-2 whitespace-nowrap"
+                className="px-7 py-3.5 rounded-lg neon-btn-primary text-sm flex items-center gap-2 whitespace-nowrap"
               >
                 <span>Ir al Editor MP3</span>
                 <ArrowRight className="w-4 h-4" />
@@ -113,7 +87,7 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/search"
-                className="px-5 py-3.5 rounded-lg bg-[var(--surface-card)] border border-white/15 hover:border-[var(--neon-primary)] text-sm font-medium text-slate-200 transition-colors whitespace-nowrap"
+                className="px-6 py-3.5 rounded-lg bg-[#090C12]/90 border border-white/20 hover:border-[var(--neon-primary)] text-sm font-medium text-white transition-colors whitespace-nowrap"
               >
                 Abrir Buscador Musical
               </Link>
@@ -126,93 +100,95 @@ export const HomePage: React.FC = () => {
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400 font-mono-tabular">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-300 font-mono-tabular">
               <span>Lectura ID3v2.3 / ID3v2.4 / ID3v1</span>
               <span aria-hidden="true">·</span>
               <span>Escritura ID3v2.3 UTF-16LE</span>
               <span aria-hidden="true">·</span>
-              <span>4 Temas Cyberpunk Neón</span>
+              <span className="neon-text">Iluminación Dinámica RGB</span>
             </div>
           </motion.div>
 
-          {/* 2. Demostración Visual Compacta del Flujo */}
+          {/* 2. Demostración Visual Compacta del Flujo con Borde de Líneas RGB Animado */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ ...revealTransition, delay: 0.08 }}
-            className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6 lg:p-8"
+            className="rgb-animated-border-card"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 mb-6 border-b border-white/10">
-              <div>
-                <span className="text-xs font-mono-tabular neon-text block">
-                  VISTA RÁPIDA DE TRANSFORMACIÓN DE METADATOS
-                </span>
-                <h2 className="text-lg font-semibold text-white mt-0.5">
-                  De un archivo MP3 con solo nombre a un contenedor etiquetado
-                </h2>
-              </div>
-              <Link
-                to="/editor"
-                className="text-xs font-medium neon-text hover:underline flex items-center gap-1 whitespace-nowrap"
-              >
-                <span>Probar con un archivo en el Editor</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-              <div className="p-5 rounded-lg bg-[#090C12] border border-white/10 flex flex-col justify-between">
+            <div className="rgb-animated-border-inner p-6 lg:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 mb-6 border-b border-white/10">
                 <div>
-                  <div className="text-xs font-mono-tabular text-slate-400 mb-2">
-                    ENTRADA · ARCHIVO LOCAL
-                  </div>
-                  <div className="text-sm font-mono-tabular font-semibold text-white mb-2">
-                    REM - Losing My Religion.mp3
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Archivo MP3 válido sin etiquetas internas o con campos
-                    incompletos.
-                  </p>
+                  <span className="text-xs font-mono-tabular neon-text block">
+                    VISTA RÁPIDA DE TRANSFORMACIÓN DE METADATOS
+                  </span>
+                  <h2 className="text-lg font-semibold text-white mt-0.5">
+                    De un archivo MP3 con solo nombre a un contenedor etiquetado
+                  </h2>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-500">
-                  Cabecera previa: 0 bytes ID3
-                </div>
+                <Link
+                  to="/editor"
+                  className="text-xs font-medium neon-text hover:underline flex items-center gap-1 whitespace-nowrap"
+                >
+                  <span>Probar con un archivo en el Editor</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
 
-              <div className="p-5 rounded-lg bg-[#090C12] border border-white/10 flex flex-col justify-between">
-                <div>
-                  <div className="text-xs font-mono-tabular neon-text mb-2">
-                    PROCESO · BÚSQUEDA Y REVISIÓN
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                <div className="p-5 rounded-lg bg-[#06080D]/95 border border-white/10 flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-slate-400 mb-2">
+                      ENTRADA · ARCHIVO LOCAL
+                    </div>
+                    <div className="text-sm font-mono-tabular font-semibold text-white mb-2">
+                      REM - Losing My Religion.mp3
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Archivo MP3 válido sin etiquetas internas o con campos
+                      incompletos.
+                    </p>
                   </div>
-                  <div className="text-sm font-semibold text-white mb-2">
-                    Identificación por nombre o consulta manual
+                  <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-500">
+                    Cabecera previa: 0 bytes ID3
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Recupera candidatos desde catálogos en línea y permite editar
-                    cualquier etiqueta antes de escribir en el archivo.
-                  </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-300">
-                  R.E.M. · Out of Time · 1991 · Pista 4/11
-                </div>
-              </div>
 
-              <div className="p-5 rounded-lg bg-[#090C12] border border-[var(--neon-border)] flex flex-col justify-between">
-                <div>
-                  <div className="text-xs font-mono-tabular neon-text mb-2">
-                    SALIDA · DESCARGA DIRECTA
+                <div className="p-5 rounded-lg bg-[#06080D]/95 border border-white/10 flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-mono-tabular neon-text mb-2">
+                      PROCESO · BÚSQUEDA Y REVISIÓN
+                    </div>
+                    <div className="text-sm font-semibold text-white mb-2">
+                      Identificación por nombre o consulta manual
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Recupera candidatos desde catálogos en línea y permite editar
+                      cualquier etiqueta antes de escribir en el archivo.
+                    </p>
                   </div>
-                  <div className="text-sm font-semibold text-white mb-2">
-                    Cabecera binaria ID3v2.3 inyectada
+                  <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-300">
+                    R.E.M. · Out of Time · 1991 · Pista 4/11
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Incluye tramas de texto UTF-16LE, letra en trama USLT y
-                    carátula frontal APIC sin alterar los frames de audio MPEG.
-                  </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular neon-text">
-                  TIT2 · TPE1 · TALB · TYER · USLT · APIC
+
+                <div className="p-5 rounded-lg bg-[#06080D]/95 border border-[var(--neon-primary)] flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-mono-tabular neon-text mb-2">
+                      SALIDA · DESCARGA DIRECTA
+                    </div>
+                    <div className="text-sm font-semibold text-white mb-2">
+                      Cabecera binaria ID3v2.3 inyectada
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Incluye tramas de texto UTF-16LE, letra en trama USLT y
+                      carátula frontal APIC sin alterar los frames de audio MPEG.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular neon-text">
+                    TIT2 · TPE1 · TALB · TYER · USLT · APIC
+                  </div>
                 </div>
               </div>
             </div>
@@ -220,8 +196,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Características Principales */}
-      <section className="py-16 border-b border-white/10">
+      {/* 3. Características Principales — Fondo de Estudio de Grabación con Opacidad Oscura */}
+      <section className="studio-section-console py-20 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -269,7 +245,7 @@ export const HomePage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.15 }}
                   transition={{ ...revealTransition, delay: idx * 0.06 }}
-                  className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6 flex flex-col justify-between"
+                  className="bg-[#090C12]/90 backdrop-blur-md neon-border-subtle rounded-xl p-6 flex flex-col justify-between"
                 >
                   <div>
                     <IconComponent className="w-5 h-5 neon-text mb-4" />
@@ -287,8 +263,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Cómo Funciona */}
-      <section className="py-16 border-b border-white/10">
+      {/* 4. Cómo Funciona — Fondo de Cabina Musical y Vinilos con Opacidad Oscura */}
+      <section className="studio-section-vinyl py-20 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -331,7 +307,7 @@ export const HomePage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.15 }}
                   transition={{ ...revealTransition, delay: idx * 0.08 }}
-                  className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6"
+                  className="bg-[#090C12]/90 backdrop-blur-md neon-border-subtle rounded-xl p-6"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-base font-semibold text-white">
@@ -349,10 +325,10 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Llamada a la Acción Final */}
-      <section className="py-16">
+      {/* 5. Llamada a la Acción Final — Fondo de Consola de Estudio con Opacidad Oscura */}
+      <section className="studio-section-console py-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="bg-[var(--surface-card)] neon-border-active rounded-xl p-8 lg:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="bg-[#090C12]/92 backdrop-blur-md neon-border-active rounded-xl p-8 lg:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div>
               <p className="text-xs font-mono-tabular neon-text mb-2">
                 ACCESO DIRECTO A LAS HERRAMIENTAS

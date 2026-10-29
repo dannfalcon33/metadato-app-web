@@ -1,24 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Palette } from 'lucide-react';
-import { NeonTheme } from '../../types/music';
 import { MetaPulseLogo } from '../MetaPulseLogo';
-
-interface AppLayoutProps {
-  activeTheme: NeonTheme;
-  onSelectTheme: (theme: NeonTheme) => void;
-}
-
-export const NEON_THEMES: Array<{
-  id: NeonTheme;
-  label: string;
-  hex: string;
-}> = [
-  { id: 'green', label: 'Verde Neón', hex: '#00FF66' },
-  { id: 'red', label: 'Rojo Carmesí', hex: '#FF2A54' },
-  { id: 'blue', label: 'Azul Cian', hex: '#00D4FF' },
-  { id: 'purple', label: 'Morado Cyber', hex: '#B855FF' },
-];
 
 const ROUTE_TITLES: Record<string, string> = {
   '/': 'MetaPulse — Estudio Cyberpunk de Metadatos MP3',
@@ -27,10 +9,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/search': 'Buscador Musical — Canciones, Artistas y Álbumes | MetaPulse',
 };
 
-export const AppLayout: React.FC<AppLayoutProps> = ({
-  activeTheme,
-  onSelectTheme,
-}) => {
+export const AppLayout: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
@@ -48,12 +27,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   ];
 
   return (
-    <div
-      data-neon-theme={activeTheme}
-      className="min-h-screen flex flex-col bg-[var(--surface-canvas)] text-[#F1F5F9] cyber-grid-bg transition-colors duration-200"
-    >
+    <div className="min-h-screen flex flex-col bg-[var(--surface-canvas)] text-[#F1F5F9] cyber-grid-bg">
       {/* Top Bar Contract: Strictly 3 zones separated by gap-8 */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-[#080B10]/90 border-b border-white/10">
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-[#05070B]/90 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-8 px-6 py-4">
           {/* Zone 1: Brand Lockup */}
           <Link
@@ -99,13 +75,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </header>
 
-      {/* Secondary Workspace Bar: Mobile Nav + Global Cyberpunk Neon Theme Selector */}
-      <div className="border-b border-white/10 bg-[#0B0F17]/90">
-        <div className="max-w-[1280px] mx-auto px-6 py-2.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Mobile Navigation Links */}
+      {/* Mobile Navigation Bar (visible only on small viewports) */}
+      <div className="md:hidden border-b border-white/10 bg-[#080B12]/90">
+        <div className="max-w-[1280px] mx-auto px-6 py-2.5">
           <nav
             aria-label="Navegación móvil"
-            className="flex md:hidden items-center gap-2 overflow-x-auto pb-1 border-b border-white/10"
+            className="flex items-center gap-2 overflow-x-auto"
           >
             {navLinks.map((item) => (
               <NavLink
@@ -124,43 +99,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </NavLink>
             ))}
           </nav>
-
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-300">
-            <Palette className="w-4 h-4 neon-text shrink-0" />
-            <span className="font-medium">
-              Tema Cyberpunk Global (aplicado a todas las vistas):
-            </span>
-          </div>
-
-          <div
-            role="group"
-            aria-label="Selector de tema neón"
-            className="flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-[#07090E] border border-white/10 self-start md:self-auto"
-          >
-            {NEON_THEMES.map((themeItem) => {
-              const isSelected = activeTheme === themeItem.id;
-              return (
-                <button
-                  key={themeItem.id}
-                  type="button"
-                  aria-pressed={isSelected}
-                  onClick={() => onSelectTheme(themeItem.id)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0 ${
-                    isSelected
-                      ? 'neon-btn-primary'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <span
-                    className="w-2.5 h-2.5 rounded-sm shrink-0"
-                    style={{ backgroundColor: themeItem.hex }}
-                    aria-hidden="true"
-                  />
-                  <span>{themeItem.label}</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
 
@@ -170,7 +108,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       </main>
 
       {/* Shared Footer */}
-      <footer className="py-10 bg-[#06080C] border-t border-white/10">
+      <footer className="py-10 bg-[#04060A] border-t border-white/10">
         <div className="max-w-[1280px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <MetaPulseLogo className="w-7 h-7" />
@@ -199,8 +137,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <Link to="/about" className="hover:text-white transition-colors">
               Acerca de
             </Link>
-            <span className="font-mono-tabular text-slate-500">
-              ID3v2.3 Binary Engine
+            <span className="font-mono-tabular neon-text">
+              ID3v2.3 RGB Engine
             </span>
           </nav>
         </div>

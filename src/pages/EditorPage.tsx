@@ -20,9 +20,11 @@ export const EditorPage: React.FC<EditorPageProps> = ({
   const activeTrack = selectedCatalogTrack || routerStateTrack;
 
   return (
-    <Mp3TaggerStudio
-      externalSelectedTrack={activeTrack}
-      onClearExternalTrack={onClearExternalTrack}
-    />
+    <div className="studio-section-console min-h-[calc(100vh-4rem)]">
+      <Mp3TaggerStudio
+        externalSelectedTrack={activeTrack}
+        onClearExternalTrack={onClearExternalTrack}
+      />
+    </div>
   );
 };

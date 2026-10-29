@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <linearGradient id="studio-room" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A0F18" />
+      <stop offset="50%" stop-color="#070A10" />
+      <stop offset="100%" stop-color="#04060A" />
+    </linearGradient>
+    <linearGradient id="rgb-line" x1="0" y1="0" x2="1600" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FF66" stop-opacity="0.5" />
+      <stop offset="33%" stop-color="#00D4FF" stop-opacity="0.5" />
+      <stop offset="66%" stop-color="#B855FF" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#FF2A54" stop-opacity="0.5" />
+    </linearGradient>
+    <radialGradient id="speaker-cone" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="65%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#studio-room)" />
+
+  <!-- Acoustic Wood Slat Diffuser Wall Panels -->
+  <g stroke="#1E293B" stroke-width="4" opacity="0.55">
+    <path d="M80 40 V420 M110 40 V420 M140 40 V420 M170 40 V420 M200 40 V420 M230 40 V420 M260 40 V420" />
+    <path d="M1340 40 V420 M1370 40 V420 M1400 40 V420 M1430 40 V420 M1460 40 V420 M1490 40 V420 M1520 40 V420" />
+  </g>
+
+  <!-- Left & Right Studio Nearfield Monitors -->
+  <g transform="translate(290, 120)">
+    <rect x="0" y="0" width="190" height="280" rx="16" fill="#0B111E" stroke="#334155" stroke-width="2.5" />
+    <circle cx="95" cy="78" r="32" fill="#060911" stroke="#475569" stroke-width="2" />
+    <circle cx="95" cy="78" r="10" fill="#00D4FF" fill-opacity="0.35" />
+    <circle cx="95" cy="190" r="64" fill="url(#speaker-cone)" stroke="#00FF66" stroke-width="2" stroke-opacity="0.5" />
+    <circle cx="95" cy="190" r="22" fill="#090D16" stroke="#64748B" stroke-width="1.5" />
+  </g>
+
+  <g transform="translate(1120, 120)">
+    <rect x="0" y="0" width="190" height="280" rx="16" fill="#0B111E" stroke="#334155" stroke-width="2.5" />
+    <circle cx="95" cy="78" r="32" fill="#060911" stroke="#475569" stroke-width="2" />
+    <circle cx="95" cy="78" r="10" fill="#B855FF" fill-opacity="0.35" />
+    <circle cx="95" cy="190" r="64" fill="url(#speaker-cone)" stroke="#FF2A54" stroke-width="2" stroke-opacity="0.5" />
+    <circle cx="95" cy="190" r="22" fill="#090D16" stroke="#64748B" stroke-width="1.5" />
+  </g>
+
+  <!-- Center Studio Analyzer Display -->
+  <g transform="translate(520, 90)">
+    <rect x="0" y="0" width="560" height="310" rx="14" fill="#050811" stroke="#334155" stroke-width="2.5" />
+    <path d="M30 240 H530 M30 160 H530 M30 80 H530" stroke="#1E293B" stroke-width="1" />
+    <!-- Spectrum Analyzer Bars -->
+    <g fill-opacity="0.65">
+      <rect x="45" y="150" width="16" height="110" rx="3" fill="#00FF66" />
+      <rect x="75" y="110" width="16" height="150" rx="3" fill="#00FF66" />
+      <rect x="105" y="85" width="16" height="175" rx="3" fill="#00D4FF" />
+      <rect x="135" y="130" width="16" height="130" rx="3" fill="#00D4FF" />
+      <rect x="165" y="65" width="16" height="195" rx="3" fill="#00D4FF" />
+      <rect x="195" y="95" width="16" height="165" rx="3" fill="#3B82F6" />
+      <rect x="225" y="140" width="16" height="120" rx="3" fill="#3B82F6" />
+      <rect x="255" y="75" width="16" height="185" rx="3" fill="#B855FF" />
+      <rect x="285" y="55" width="16" height="205" rx="3" fill="#B855FF" />
+      <rect x="315" y="105" width="16" height="155" rx="3" fill="#B855FF" />
+      <rect x="345" y="125" width="16" height="135" rx="3" fill="#FF2A54" />
+      <rect x="375" y="80" width="16" height="180" rx="3" fill="#FF2A54" />
+      <rect x="405" y="115" width="16" height="145" rx="3" fill="#FF2A54" />
+      <rect x="435" y="145" width="16" height="115" rx="3" fill="#00FF66" />
+      <rect x="465" y="165" width="16" height="95" rx="3" fill="#00FF66" />
+      <rect x="495" y="190" width="16" height="70" rx="3" fill="#00D4FF" />
+    </g>
+  </g>
+
+  <!-- Mixing Console Desk & Motorized Fader Bank -->
+  <polygon points="120,450 1480,450 1580,860 20,860" fill="#080C14" stroke="#1E293B" stroke-width="3" />
+  <line x1="120" y1="454" x2="1480" y2="454" stroke="url(#rgb-line)" stroke-width="4" />
+
+  <!-- 16 Mixing Channels (EQ Knobs + Fader Tracks + Fader Caps) -->
+  <g transform="translate(180, 490)">
+    <g stroke="#334155" stroke-width="3">
+      <line x1="40" y1="90" x2="40" y2="310" />
+      <line x1="120" y1="90" x2="120" y2="310" />
+      <line x1="200" y1="90" x2="200" y2="310" />
+      <line x1="280" y1="90" x2="280" y2="310" />
+      <line x1="360" y1="90" x2="360" y2="310" />
+      <line x1="440" y1="90" x2="440" y2="310" />
+      <line x1="520" y1="90" x2="520" y2="310" />
+      <line x1="600" y1="90" x2="600" y2="310" />
+      <line x1="680" y1="90" x2="680" y2="310" />
+      <line x1="760" y1="90" x2="760" y2="310" />
+      <line x1="840" y1="90" x2="840" y2="310" />
+      <line x1="920" y1="90" x2="920" y2="310" />
+      <line x1="1000" y1="90" x2="1000" y2="310" />
+      <line x1="1080" y1="90" x2="1080" y2="310" />
+      <line x1="1160" y1="90" x2="1160" y2="310" />
+    </g>
+
+    <!-- Illuminated Fader Caps -->
+    <rect x="24" y="160" width="32" height="18" rx="4" fill="#0F172A" stroke="#00FF66" stroke-width="2" />
+    <rect x="104" y="190" width="32" height="18" rx="4" fill="#0F172A" stroke="#00FF66" stroke-width="2" />
+    <rect x="184" y="135" width="32" height="18" rx="4" fill="#0F172A" stroke="#00D4FF" stroke-width="2" />
+    <rect x="264" y="175" width="32" height="18" rx="4" fill="#0F172A" stroke="#00D4FF" stroke-width="2" />
+    <rect x="344" y="210" width="32" height="18" rx="4" fill="#0F172A" stroke="#00D4FF" stroke-width="2" />
+    <rect x="424" y="145" width="32" height="18" rx="4" fill="#0F172A" stroke="#B855FF" stroke-width="2" />
+    <rect x="504" y="125" width="32" height="18" rx="4" fill="#0F172A" stroke="#B855FF" stroke-width="2" />
+    <rect x="584" y="165" width="32" height="18" rx="4" fill="#0F172A" stroke="#B855FF" stroke-width="2" />
+    <rect x="664" y="185" width="32" height="18" rx="4" fill="#0F172A" stroke="#FF2A54" stroke-width="2" />
+    <rect x="744" y="140" width="32" height="18" rx="4" fill="#0F172A" stroke="#FF2A54" stroke-width="2" />
+    <rect x="824" y="170" width="32" height="18" rx="4" fill="#0F172A" stroke="#FF2A54" stroke-width="2" />
+    <rect x="904" y="200" width="32" height="18" rx="4" fill="#0F172A" stroke="#00FF66" stroke-width="2" />
+    <rect x="984" y="150" width="32" height="18" rx="4" fill="#0F172A" stroke="#00D4FF" stroke-width="2" />
+    <rect x="1064" y="130" width="32" height="18" rx="4" fill="#0F172A" stroke="#B855FF" stroke-width="2" />
+    <rect x="1144" y="155" width="32" height="18" rx="4" fill="#0F172A" stroke="#FF2A54" stroke-width="2" />
+  </g>
+</svg>

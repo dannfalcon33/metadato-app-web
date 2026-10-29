@@ -9,5 +9,9 @@ interface SearchPageProps {
 export const SearchPage: React.FC<SearchPageProps> = ({
   onSendTrackToEditor,
 }) => {
-  return <CatalogExplorer onSendTrackToEditor={onSendTrackToEditor} />;
+  return (
+    <div className="studio-section-vinyl min-h-[calc(100vh-4rem)]">
+      <CatalogExplorer onSendTrackToEditor={onSendTrackToEditor} />
+    </div>
+  );
 };

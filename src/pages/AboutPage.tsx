@@ -17,7 +17,7 @@ const revealTransition = {
 
 export const AboutPage: React.FC = () => {
   return (
-    <div className="py-12">
+    <div className="studio-section-console py-12 min-h-[calc(100vh-4rem)]">
       <div className="max-w-[1280px] mx-auto px-6">
         {/* Header */}
         <motion.div
