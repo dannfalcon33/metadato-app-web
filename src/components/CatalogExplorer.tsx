@@ -29,6 +29,7 @@ import {
   searchTracksOnline,
 } from '../services/musicCatalog';
 import { CoverArtVisual } from './CoverArtVisual';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface CatalogExplorerProps {
   onSendTrackToEditor: (track: CatalogTrackResult) => void;
@@ -61,12 +62,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
   onSendTrackToEditor,
 }) => {
   const navigate = useNavigate();
+  const { tr } = useLanguage();
+
   const [searchMode, setSearchMode] = useState<SearchMode>('songs');
   const [query, setQuery] = useState<string>('R.E.M.');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  // Contextual filters (Section 8)
   const [selectedGenreFilter, setSelectedGenreFilter] =
     useState<string>('all');
   const [onlyWithPreviewFilter, setOnlyWithPreviewFilter] =
@@ -76,20 +78,17 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
   const [artistResults, setArtistResults] = useState<CatalogArtistResult[]>([]);
   const [albumResults, setAlbumResults] = useState<CatalogAlbumResult[]>([]);
 
-  // Detailed Album Tracklist Drawer State
   const [selectedAlbumDetail, setSelectedAlbumDetail] =
     useState<CatalogAlbumResult | null>(null);
   const [albumTracks, setAlbumTracks] = useState<CatalogTrackResult[]>([]);
   const [isLoadingAlbumTracks, setIsLoadingAlbumTracks] =
     useState<boolean>(false);
 
-  // Lyrics Inspector State in Catalog Explorer
   const [inspectedLyricsTrack, setInspectedLyricsTrack] =
     useState<CatalogTrackResult | null>(null);
   const [inspectedLyricsText, setInspectedLyricsText] = useState<string>('');
   const [isLoadingLyrics, setIsLoadingLyrics] = useState<boolean>(false);
 
-  // Single-instance Audio preview state with real duration & progress
   const [playingTrack, setPlayingTrack] = useState<CatalogTrackResult | null>(
     null
   );
@@ -215,7 +214,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
     } catch (err) {
       if ((err as Error)?.name === 'AbortError') return;
       setErrorMessage(
-        'No fue posible completar la consulta en línea. Intenta nuevamente.'
+        tr(
+          'No fue posible completar la consulta en línea. Intenta nuevamente.',
+          'Could not complete the online query. Please try again.',
+          'Não foi possível concluir a consulta online. Tente novamente.'
+        )
       );
     } finally {
       if (!controller.signal.aborted) {
@@ -260,7 +263,6 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
     navigate('/editor', { state: { prefilledTrack: track } });
   };
 
-  // Extract available genres dynamically for contextual filtering
   const availableGenres = useMemo(() => {
     const set = new Set<string>();
     if (searchMode === 'songs') {
@@ -318,16 +320,27 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
         >
           <div>
             <p className="text-xs font-mono-tabular neon-text tracking-wider mb-2">
-              BUSCADOR MUSICAL E INSPECTOR DISCOGRÁFICO
+              {tr(
+                'BUSCADOR MUSICAL E INSPECTOR DISCOGRÁFICO',
+                'MUSIC SEARCH & DISCOGRAPHY INSPECTOR',
+                'BUSCADOR MUSICAL E INSPETOR DISCOGRÁFICO'
+              )}
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white balance-text">
-              Consulta canciones, artistas, álbumes, letras y vistas previas disponibles
+              {tr(
+                'Consulta canciones, artistas, álbumes, letras y vistas previas disponibles',
+                'Explore songs, artists, albums, lyrics, and available audio previews',
+                'Consulte músicas, artistas, álbuns, letras e prévias de áudio disponíveis'
+              )}
             </h1>
           </div>
 
           <p className="text-xs text-slate-300 max-w-md">
-            Explora fichas técnicas o transfiere los metadatos de cualquier resultado
-            al Editor MP3 para revisarlos antes de escribir en tu archivo.
+            {tr(
+              'Explora fichas técnicas o transfiere los metadatos de cualquier resultado al Editor MP3 para revisarlos antes de escribir en tu archivo.',
+              'Inspect technical datasheets or transfer metadata from any result to the MP3 Editor to review before writing to your file.',
+              'Explore fichas técnicas ou transfira os metadados de qualquer resultado para o Editor MP3 para revisá-los antes de gravar no seu arquivo.'
+            )}
           </p>
         </motion.div>
 
@@ -337,7 +350,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
             {/* Segmented Mode Tabs */}
             <div
               role="tablist"
-              aria-label="Modo de búsqueda"
+              aria-label={tr(
+                'Modo de búsqueda',
+                'Search mode',
+                'Modo de busca'
+              )}
               className="flex items-center gap-1 p-1 bg-[#090C12] rounded-lg border border-white/10 shrink-0"
             >
               <button
@@ -352,7 +369,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 }`}
               >
                 <Music className="w-3.5 h-3.5" />
-                <span>Canciones</span>
+                <span>{tr('Canciones', 'Songs', 'Músicas')}</span>
               </button>
               <button
                 type="button"
@@ -366,7 +383,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Artistas y Discografía</span>
+                <span>
+                  {tr(
+                    'Artistas y Discografía',
+                    'Artists & Discography',
+                    'Artistas e Discografia'
+                  )}
+                </span>
               </button>
               <button
                 type="button"
@@ -380,7 +403,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 }`}
               >
                 <Disc className="w-3.5 h-3.5" />
-                <span>Álbumes</span>
+                <span>{tr('Álbumes', 'Albums', 'Álbuns')}</span>
               </button>
             </div>
 
@@ -398,8 +421,16 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  aria-label="Buscar canciones, artistas o álbumes"
-                  placeholder="Buscar por canción, artista o título de álbum..."
+                  aria-label={tr(
+                    'Buscar canciones, artistas o álbumes',
+                    'Search songs, artists, or albums',
+                    'Buscar músicas, artistas ou álbuns'
+                  )}
+                  placeholder={tr(
+                    'Buscar por canción, artista o título de álbum...',
+                    'Search by song, artist, or album title...',
+                    'Buscar por música, artista ou título de álbum...'
+                  )}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#090C12] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -408,7 +439,9 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 disabled={isLoading}
                 className="px-4 py-2.5 rounded-lg neon-btn-primary text-xs cursor-pointer whitespace-nowrap shrink-0"
               >
-                {isLoading ? 'Consultando...' : 'Buscar Datos'}
+                {isLoading
+                  ? tr('Consultando...', 'Searching...', 'Consultando...')
+                  : tr('Buscar Datos', 'Search Data', 'Buscar Dados')}
               </button>
             </form>
           </div>
@@ -416,7 +449,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
           {/* Quick Search Presets + Contextual Filters */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-white/10">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-slate-400 mr-1">Búsquedas rápidas:</span>
+              <span className="text-xs text-slate-400 mr-1">
+                {tr(
+                  'Búsquedas rápidas:',
+                  'Quick searches:',
+                  'Buscas rápidas:'
+                )}
+              </span>
               {QUICK_SEARCH_PRESETS.map((preset) => (
                 <button
                   key={preset}
@@ -442,7 +481,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 <div className="flex items-center gap-1.5 text-xs">
                   <SlidersHorizontal className="w-3.5 h-3.5 neon-text" />
                   <label htmlFor="genre-filter" className="text-slate-400">
-                    Género:
+                    {tr('Género:', 'Genre:', 'Gênero:')}
                   </label>
                   <select
                     id="genre-filter"
@@ -450,7 +489,9 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                     onChange={(e) => setSelectedGenreFilter(e.target.value)}
                     className="px-2.5 py-1 rounded bg-[#090C12] border border-white/10 text-xs text-white"
                   >
-                    <option value="all">Todos ({availableGenres.length})</option>
+                    <option value="all">
+                      {tr('Todos', 'All', 'Todos')} ({availableGenres.length})
+                    </option>
                     {availableGenres.map((g) => (
                       <option key={g} value={g}>
                         {g}
@@ -471,7 +512,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                       : 'bg-[#090C12] text-slate-300 border border-white/10 hover:border-white/25'
                   }`}
                 >
-                  Solo con preview disponible
+                  {tr(
+                    'Solo con preview disponible',
+                    'Only with available preview',
+                    'Apenas com prévia disponível'
+                  )}
                 </button>
               )}
             </div>
@@ -486,7 +531,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 type="button"
                 onClick={() => toggleTrackPreview(playingTrack)}
                 className="w-9 h-9 rounded-lg neon-btn-primary flex items-center justify-center shrink-0 cursor-pointer"
-                aria-label={isPlayingAudio ? 'Pausar preview' : 'Reproducir preview'}
+                aria-label={
+                  isPlayingAudio
+                    ? tr('Pausar preview', 'Pause preview', 'Pausar prévia')
+                    : tr('Reproducir preview', 'Play preview', 'Reproduzir prévia')
+                }
               >
                 {isPlayingAudio ? (
                   <Pause className="w-4 h-4" />
@@ -496,7 +545,8 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
               </button>
               <div className="min-w-0">
                 <div className="text-xs font-semibold text-white truncate">
-                  Vista previa: {playingTrack.artist} — {playingTrack.title}
+                  {tr('Vista previa:', 'Preview:', 'Prévia:')}{' '}
+                  {playingTrack.artist} — {playingTrack.title}
                 </div>
                 <div className="text-xs text-slate-400 truncate font-mono-tabular">
                   {playingTrack.album} ({playingTrack.year})
@@ -531,7 +581,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 type="button"
                 onClick={stopPreview}
                 className="p-1 text-slate-400 hover:text-white cursor-pointer"
-                aria-label="Cerrar reproductor de vista previa"
+                aria-label={tr(
+                  'Cerrar reproductor de vista previa',
+                  'Close preview player',
+                  'Fechar reprodutor de prévia'
+                )}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -561,7 +615,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 </div>
                 <div>
                   <div className="text-xs font-mono-tabular neon-text">
-                    VISOR DE LETRA (FRAME USLT)
+                    {tr(
+                      'VISOR DE LETRA (FRAME USLT)',
+                      'LYRICS VIEWER (USLT FRAME)',
+                      'VISUALIZADOR DE LETRA (FRAME USLT)'
+                    )}
                   </div>
                   <h2 className="text-base font-bold text-white">
                     {inspectedLyricsTrack.artist} — {inspectedLyricsTrack.title}
@@ -583,7 +641,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                   }
                   className="px-3 py-1.5 rounded-lg neon-btn-primary text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
-                  <span>Usar en el Editor MP3</span>
+                  <span>
+                    {tr(
+                      'Usar en el Editor MP3',
+                      'Use in MP3 Editor',
+                      'Usar no Editor MP3'
+                    )}
+                  </span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
                 <button
@@ -592,14 +656,18 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs text-slate-200 flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>Cerrar</span>
+                  <span>{tr('Cerrar', 'Close', 'Fechar')}</span>
                 </button>
               </div>
             </div>
 
             {isLoadingLyrics ? (
               <div className="py-6 text-center text-xs text-slate-400 font-mono-tabular">
-                Recuperando transcripción de letra (USLT)...
+                {tr(
+                  'Recuperando transcripción de letra (USLT)...',
+                  'Retrieving lyrics transcription (USLT)...',
+                  'Recuperando transcrição da letra (USLT)...'
+                )}
               </div>
             ) : (
               <pre className="whitespace-pre-wrap font-sans text-xs text-slate-200 leading-relaxed max-h-64 overflow-y-auto p-4 rounded-lg bg-[#090C12] border border-white/10">
@@ -624,7 +692,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 </div>
                 <div>
                   <div className="text-xs font-mono-tabular neon-text mb-1">
-                    INSPECTOR DE ÁLBUM Y METADATOS DE PISTAS
+                    {tr(
+                      'INSPECTOR DE ÁLBUM Y METADATOS DE PISTAS',
+                      'ALBUM & TRACK METADATA INSPECTOR',
+                      'INSPETOR DE ÁLBUM E METADADOS DE FAIXAS'
+                    )}
                   </div>
                   <h2 className="text-xl font-bold text-white mb-1">
                     {selectedAlbumDetail.album}
@@ -635,17 +707,25 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>
-                      Lanzamiento:{' '}
+                      {tr('Lanzamiento:', 'Release:', 'Lançamento:')}{' '}
                       {selectedAlbumDetail.releaseDate || selectedAlbumDetail.year}
                     </span>
                     <span aria-hidden="true">·</span>
-                    <span>{selectedAlbumDetail.trackCount} pistas</span>
+                    <span>
+                      {selectedAlbumDetail.trackCount}{' '}
+                      {tr('pistas', 'tracks', 'faixas')}
+                    </span>
                     <span aria-hidden="true">·</span>
                     <span>{selectedAlbumDetail.genre}</span>
                   </div>
                   {selectedAlbumDetail.copyright && (
                     <p className="text-xs text-slate-400">
-                      Sello / Copyright: {selectedAlbumDetail.copyright}
+                      {tr(
+                        'Sello / Copyright:',
+                        'Label / Copyright:',
+                        'Gravadora / Copyright:'
+                      )}{' '}
+                      {selectedAlbumDetail.copyright}
                     </p>
                   )}
                 </div>
@@ -657,34 +737,64 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                 className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs text-slate-200 flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
-                <span>Cerrar ficha de álbum</span>
+                <span>
+                  {tr(
+                    'Cerrar ficha de álbum',
+                    'Close album sheet',
+                    'Fechar ficha do álbum'
+                  )}
+                </span>
               </button>
             </div>
 
             <div className="pt-5">
               <h3 className="text-xs font-mono-tabular text-slate-400 mb-3">
-                LISTADO DE PISTAS Y METADATOS TÉCNICOS
+                {tr(
+                  'LISTADO DE PISTAS Y METADATOS TÉCNICOS',
+                  'TRACKLIST & TECHNICAL METADATA',
+                  'LISTA DE FAIXAS E METADADOS TÉCNICOS'
+                )}
               </h3>
 
               {isLoadingAlbumTracks ? (
                 <div className="py-8 text-center text-xs text-slate-400 font-mono-tabular">
-                  Cargando lista de pistas del álbum...
+                  {tr(
+                    'Cargando lista de pistas del álbum...',
+                    'Loading album tracklist...',
+                    'Carregando lista de faixas do álbum...'
+                  )}
                 </div>
               ) : albumTracks.length === 0 ? (
                 <div className="py-6 text-center text-xs text-slate-400">
-                  No se encontraron pistas desglosadas para esta edición.
+                  {tr(
+                    'No se encontraron pistas desglosadas para esta edición.',
+                    'No individual tracks found for this release.',
+                    'Nenhuma faixa detalhada encontrada para esta edição.'
+                  )}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-white/10 text-xs text-slate-400 font-mono-tabular">
-                        <th className="py-2 px-3">Pista</th>
-                        <th className="py-2 px-3">Título (TIT2)</th>
-                        <th className="py-2 px-3">Artista (TPE1)</th>
-                        <th className="py-2 px-3">Género (TCON)</th>
-                        <th className="py-2 px-3 text-right">Duración</th>
-                        <th className="py-2 px-3 text-right">Acciones</th>
+                        <th className="py-2 px-3">
+                          {tr('Pista', 'Track', 'Faixa')}
+                        </th>
+                        <th className="py-2 px-3">
+                          {tr('Título (TIT2)', 'Title (TIT2)', 'Título (TIT2)')}
+                        </th>
+                        <th className="py-2 px-3">
+                          {tr('Artista (TPE1)', 'Artist (TPE1)', 'Artista (TPE1)')}
+                        </th>
+                        <th className="py-2 px-3">
+                          {tr('Género (TCON)', 'Genre (TCON)', 'Gênero (TCON)')}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {tr('Duración', 'Duration', 'Duração')}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {tr('Acciones', 'Actions', 'Ações')}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5 text-xs">
@@ -709,14 +819,20 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                                 className="px-2 py-1 rounded bg-[#090C12] border border-white/10 hover:border-[var(--neon-primary)] text-xs text-slate-300 inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
                               >
                                 <FileText className="w-3 h-3 neon-text" />
-                                <span>Letra</span>
+                                <span>{tr('Letra', 'Lyrics', 'Letra')}</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleTransferToEditor(trk)}
                                 className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-xs neon-text font-medium inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
                               >
-                                <span>Usar en Editor</span>
+                                <span>
+                                  {tr(
+                                    'Usar en Editor',
+                                    'Use in Editor',
+                                    'Usar no Editor'
+                                  )}
+                                </span>
                                 <ArrowUpRight className="w-3 h-3" />
                               </button>
                             </div>
@@ -745,10 +861,18 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
           filteredSongs.length === 0 ? (
             <div className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-10 text-center">
               <p className="text-sm font-medium text-white mb-1">
-                No se encontraron canciones con los filtros actuales para &quot;{query}&quot;
+                {tr(
+                  `No se encontraron canciones con los filtros actuales para "${query}"`,
+                  `No songs found with current filters for "${query}"`,
+                  `Nenhuma música encontrada com os filtros atuais para "${query}"`
+                )}
               </p>
               <p className="text-xs text-slate-400">
-                Prueba desactivando los filtros contextuales o busca otro término.
+                {tr(
+                  'Prueba desactivando los filtros contextuales o busca otro término.',
+                  'Try disabling contextual filters or search for another term.',
+                  'Tente desativar os filtros contextuais ou busque outro termo.'
+                )}
               </p>
             </div>
           ) : (
@@ -779,12 +903,16 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                           {track.artist}
                         </p>
                         <p className="text-xs text-slate-300 truncate mt-1">
-                          Álbum: {track.album}
+                          {tr('Álbum:', 'Album:', 'Álbum:')} {track.album}
                         </p>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-400 font-mono-tabular mt-2">
-                          <span>Año {track.year}</span>
+                          <span>
+                            {tr('Año', 'Year', 'Ano')} {track.year}
+                          </span>
                           <span aria-hidden="true">·</span>
-                          <span>Pista {track.trackNumber}</span>
+                          <span>
+                            {tr('Pista', 'Track', 'Faixa')} {track.trackNumber}
+                          </span>
                           <span aria-hidden="true">·</span>
                           <span>{formatDurationMs(track.durationMs)}</span>
                         </div>
@@ -802,22 +930,24 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                             type="button"
                             onClick={() => toggleTrackPreview(track)}
                             className="px-2.5 py-1.5 rounded-lg bg-[#090C12] border border-white/10 hover:border-[var(--neon-primary)] text-xs text-slate-200 flex items-center gap-1 cursor-pointer whitespace-nowrap"
-                            title="Reproducir vista previa disponible"
                           >
                             {isPlaying ? (
                               <Pause className="w-3.5 h-3.5 neon-text" />
                             ) : (
                               <Play className="w-3.5 h-3.5 neon-text" />
                             )}
-                            <span>{isPlaying ? 'Pausa' : 'Preview'}</span>
+                            <span>
+                              {isPlaying
+                                ? tr('Pausa', 'Pause', 'Pausa')
+                                : 'Preview'}
+                            </span>
                           </button>
                         ) : (
-                          <span
-                            className="px-2 py-1.5 rounded-lg bg-[#090C12] border border-white/5 text-xs text-slate-500 flex items-center gap-1 whitespace-nowrap"
-                            title="Esta edición no incluye vista previa de audio en la fuente"
-                          >
+                          <span className="px-2 py-1.5 rounded-lg bg-[#090C12] border border-white/5 text-xs text-slate-500 flex items-center gap-1 whitespace-nowrap">
                             <VolumeX className="w-3.5 h-3.5" />
-                            <span>Sin preview</span>
+                            <span>
+                              {tr('Sin preview', 'No preview', 'Sem prévia')}
+                            </span>
                           </span>
                         )}
 
@@ -827,7 +957,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                           className="px-2.5 py-1.5 rounded-lg bg-[#090C12] border border-white/10 hover:border-[var(--neon-primary)] text-xs text-slate-200 flex items-center gap-1 cursor-pointer whitespace-nowrap"
                         >
                           <FileText className="w-3.5 h-3.5 neon-text" />
-                          <span>Letra</span>
+                          <span>{tr('Letra', 'Lyrics', 'Letra')}</span>
                         </button>
 
                         <button
@@ -835,7 +965,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                           onClick={() => handleTransferToEditor(track)}
                           className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-medium text-white flex items-center gap-1 cursor-pointer whitespace-nowrap"
                         >
-                          <span>Usar en Editor</span>
+                          <span>
+                            {tr(
+                              'Usar en Editor',
+                              'Use in Editor',
+                              'Usar no Editor'
+                            )}
+                          </span>
                           <ArrowUpRight className="w-3.5 h-3.5 neon-text" />
                         </button>
                       </div>
@@ -849,7 +985,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
           <div className="space-y-6">
             {filteredArtists.length === 0 ? (
               <div className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-8 text-center text-sm text-slate-400">
-                No se encontraron perfiles de artista para &quot;{query}&quot;.
+                {tr(
+                  `No se encontraron perfiles de artista para "${query}".`,
+                  `No artist profiles found for "${query}".`,
+                  `Nenhum perfil de artista encontrado para "${query}".`
+                )}
               </div>
             ) : (
               filteredArtists.map((art) => (
@@ -861,9 +1001,23 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                     <div>
                       <h2 className="text-xl font-bold text-white">{art.artist}</h2>
                       <div className="flex items-center gap-2 text-xs text-slate-400 font-mono-tabular mt-1">
-                        <span>Género principal: {art.primaryGenre}</span>
+                        <span>
+                          {tr(
+                            'Género principal:',
+                            'Primary genre:',
+                            'Gênero principal:'
+                          )}{' '}
+                          {art.primaryGenre}
+                        </span>
                         <span aria-hidden="true">·</span>
-                        <span>{art.topAlbums.length} álbumes indexados</span>
+                        <span>
+                          {art.topAlbums.length}{' '}
+                          {tr(
+                            'álbumes indexados',
+                            'indexed albums',
+                            'álbuns indexados'
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -871,7 +1025,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                   {/* Artist's Albums Grid */}
                   <div className="mb-6">
                     <h3 className="text-xs font-mono-tabular text-slate-400 mb-3">
-                      ÁLBUMES Y DISCOGRAFÍA DEL ARTISTA
+                      {tr(
+                        'ÁLBUMES Y DISCOGRAFÍA DEL ARTISTA',
+                        'ARTIST ALBUMS & DISCOGRAPHY',
+                        'ÁLBUNS E DISCOGRAFIA DO ARTISTA'
+                      )}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {art.topAlbums.map((alb) => (
@@ -892,7 +1050,8 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                                 {alb.album}
                               </div>
                               <div className="text-xs text-slate-400 font-mono-tabular mt-0.5">
-                                {alb.year} · {alb.trackCount} pistas
+                                {alb.year} · {alb.trackCount}{' '}
+                                {tr('pistas', 'tracks', 'faixas')}
                               </div>
                             </div>
                           </div>
@@ -901,7 +1060,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                             onClick={() => handleOpenAlbumInspector(alb)}
                             className="px-2.5 py-1.5 rounded bg-white/10 hover:bg-white/15 text-xs neon-text font-medium shrink-0 cursor-pointer whitespace-nowrap"
                           >
-                            Ver pistas
+                            {tr('Ver pistas', 'View tracks', 'Ver faixas')}
                           </button>
                         </div>
                       ))}
@@ -912,7 +1071,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                   {art.topTracks.length > 0 && (
                     <div>
                       <h3 className="text-xs font-mono-tabular text-slate-400 mb-3">
-                        CANCIONES DESTACADAS Y METADATOS ID3
+                        {tr(
+                          'CANCIONES DESTACADAS Y METADATOS ID3',
+                          'TOP TRACKS & ID3 METADATA',
+                          'MÚSICAS EM DESTAQUE E METADADOS ID3'
+                        )}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         {art.topTracks.map((t) => (
@@ -925,7 +1088,8 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                               <span className="text-slate-400"> · {t.album}</span>
                               <span className="text-slate-500 font-mono-tabular">
                                 {' '}
-                                ({t.year}, Pista {t.trackNumber})
+                                ({t.year}, {tr('Pista', 'Track', 'Faixa')}{' '}
+                                {t.trackNumber})
                               </span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
@@ -934,14 +1098,18 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                                 onClick={() => handleInspectTrackLyrics(t)}
                                 className="text-xs text-slate-300 hover:text-white cursor-pointer whitespace-nowrap"
                               >
-                                Letra
+                                {tr('Letra', 'Lyrics', 'Letra')}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleTransferToEditor(t)}
                                 className="text-xs neon-text hover:underline cursor-pointer whitespace-nowrap"
                               >
-                                Usar en Editor
+                                {tr(
+                                  'Usar en Editor',
+                                  'Use in Editor',
+                                  'Usar no Editor'
+                                )}
                               </button>
                             </div>
                           </div>
@@ -955,7 +1123,11 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
           </div>
         ) : filteredAlbums.length === 0 ? (
           <div className="bg-[var(--surface-card)] neon-border-subtle rounded-xl p-8 text-center text-sm text-slate-400">
-            No se encontraron álbumes para &quot;{query}&quot;.
+            {tr(
+              `No se encontraron álbumes para "${query}".`,
+              `No albums found for "${query}".`,
+              `Nenhum álbum encontrado para "${query}".`
+            )}
           </div>
         ) : (
           /* Albums Grid Mode */
@@ -982,9 +1154,14 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                       {alb.artist}
                     </p>
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-400 font-mono-tabular mt-2">
-                      <span>Lanzamiento {alb.releaseDate || alb.year}</span>
+                      <span>
+                        {tr('Lanzamiento', 'Release', 'Lançamento')}{' '}
+                        {alb.releaseDate || alb.year}
+                      </span>
                       <span aria-hidden="true">·</span>
-                      <span>{alb.trackCount} pistas</span>
+                      <span>
+                        {alb.trackCount} {tr('pistas', 'tracks', 'faixas')}
+                      </span>
                     </div>
                     <div className="text-xs text-slate-400 mt-1 truncate">
                       {alb.genre} · {alb.country || 'Global'}
@@ -994,7 +1171,7 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
 
                 <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
                   <span className="text-xs text-slate-500 font-mono-tabular truncate">
-                    {alb.copyright || `Catálogo #${alb.collectionId}`}
+                    {alb.copyright || `#${alb.collectionId}`}
                   </span>
                   <button
                     type="button"
@@ -1002,7 +1179,13 @@ export const CatalogExplorer: React.FC<CatalogExplorerProps> = ({
                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-medium text-white flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <ListMusic className="w-3.5 h-3.5 neon-text" />
-                    <span>Inspeccionar Álbum</span>
+                    <span>
+                      {tr(
+                        'Inspeccionar Álbum',
+                        'Inspect Album',
+                        'Inspecionar Álbum'
+                      )}
+                    </span>
                   </button>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CatalogTrackResult } from './types/music';
 import { AppLayout } from './components/layout/AppLayout';
 import { HomePage } from './pages/HomePage';
+import { LanguageProvider } from './i18n/LanguageContext';
 
 const AboutPage = lazy(() =>
   import('./pages/AboutPage').then((m) => ({ default: m.AboutPage }))
@@ -22,41 +23,43 @@ export default function App() {
     useState<CatalogTrackResult | null>(null);
 
   return (
-    <BrowserRouter>
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-[#05070B] flex items-center justify-center text-xs font-mono-tabular text-slate-400">
-            Cargando vista de MetaPulse...
-          </div>
-        }
-      >
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route
-              path="/editor"
-              element={
-                <EditorPage
-                  selectedCatalogTrack={selectedCatalogTrack}
-                  onClearExternalTrack={() => setSelectedCatalogTrack(null)}
-                />
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <SearchPage
-                  onSendTrackToEditor={(track) =>
-                    setSelectedCatalogTrack(track)
-                  }
-                />
-              }
-            />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Suspense
+          fallback={
+            <div className="min-h-screen bg-[#05070B] flex items-center justify-center text-xs font-mono-tabular text-slate-400">
+              MetaPulse...
+            </div>
+          }
+        >
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route
+                path="/editor"
+                element={
+                  <EditorPage
+                    selectedCatalogTrack={selectedCatalogTrack}
+                    onClearExternalTrack={() => setSelectedCatalogTrack(null)}
+                  />
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  <SearchPage
+                    onSendTrackToEditor={(track) =>
+                      setSelectedCatalogTrack(track)
+                    }
+                  />
+                }
+              />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }

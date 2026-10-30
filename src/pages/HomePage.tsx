@@ -12,6 +12,7 @@ import {
   Sliders,
 } from 'lucide-react';
 import { MetaPulseLogo } from '../components/MetaPulseLogo';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const revealTransition = {
   duration: 0.42,
@@ -19,6 +20,105 @@ const revealTransition = {
 };
 
 export const HomePage: React.FC = () => {
+  const { tr } = useLanguage();
+
+  const capabilities = [
+    {
+      icon: Sliders,
+      title: tr(
+        'Edición ID3v2.3 en el navegador',
+        'In-browser ID3v2.3 Editing',
+        'Edição ID3v2.3 no navegador'
+      ),
+      desc: tr(
+        'Modifica título (TIT2), artista (TPE1), álbum (TALB), año (TYER), pista (TRCK), género (TCON), compositor (TCOM) y sello (TPUB).',
+        'Modify title (TIT2), artist (TPE1), album (TALB), year (TYER), track (TRCK), genre (TCON), composer (TCOM), and label (TPUB).',
+        'Modifique título (TIT2), artista (TPE1), álbum (TALB), ano (TYER), faixa (TRCK), gênero (TCON), compositor (TCOM) e gravadora (TPUB).'
+      ),
+    },
+    {
+      icon: Image,
+      title: tr(
+        'Carátulas APIC y Letras USLT',
+        'APIC Cover Art & USLT Lyrics',
+        'Capas APIC e Letras USLT'
+      ),
+      desc: tr(
+        'Incrusta portadas de álbumes o imágenes personalizadas junto con la transcripción de la letra en la trama estándar USLT.',
+        'Embed album artwork or custom images along with the full lyrics transcription inside the standard USLT frame.',
+        'Incorpore capas de álbuns ou imagens personalizadas junto com a transcrição da letra no frame padrão USLT.'
+      ),
+    },
+    {
+      icon: Search,
+      title: tr(
+        'Buscador de canciones, artistas y álbumes',
+        'Song, Artist & Album Explorer',
+        'Buscador de músicas, artistas e álbuns'
+      ),
+      desc: tr(
+        'Consulta discografías, años de publicación y listados de pistas en una vista dedicada y envía metadatos al editor con un clic.',
+        'Explore discographies, release years, and tracklists in a dedicated view and transfer metadata to the editor in one click.',
+        'Consulte discografias, anos de lançamento e listas de faixas em uma visualização dedicada e envie metadados ao editor com um clique.'
+      ),
+    },
+    {
+      icon: Disc3,
+      title: tr(
+        'Vistas previas cuando están disponibles',
+        'Audio Previews When Available',
+        'Prévias de áudio quando disponíveis'
+      ),
+      desc: tr(
+        'Escucha fragmentos de referencia entregados por el catálogo cuando la fuente lo permite, o consulta la ficha técnica completa.',
+        'Listen to reference audio clips provided by the catalog when available, or inspect the complete technical datasheet.',
+        'Ouça trechos de referência fornecidos pelo catálogo quando disponíveis, ou consulte a ficha técnica completa.'
+      ),
+    },
+  ];
+
+  const steps = [
+    {
+      step: tr(
+        '01. Selección del archivo MP3',
+        '01. MP3 File Selection',
+        '01. Seleção do arquivo MP3'
+      ),
+      icon: FileAudio,
+      body: tr(
+        'Sube un archivo .mp3 desde tu dispositivo o utiliza uno de los contenedores de prueba incluidos en el Editor para explorar el flujo.',
+        'Upload a .mp3 file from your device or use one of the built-in untagged sample containers in the Editor to test the workflow.',
+        'Envie um arquivo .mp3 do seu dispositivo ou utilize um dos contêineres de teste incluídos no Editor para explorar o fluxo.'
+      ),
+    },
+    {
+      step: tr(
+        '02. Búsqueda y revisión de etiquetas',
+        '02. Tag Lookup & Review',
+        '02. Busca e revisão de tags'
+      ),
+      icon: Sparkles,
+      body: tr(
+        'Compara las coincidencias sugeridas por nombre de archivo, transfiere datos desde el Buscador Musical o ajusta cualquier campo manualmente.',
+        'Compare matches suggested by filename, transfer data from Music Search, or fine-tune any field manually.',
+        'Compare as correspondências sugeridas pelo nome do arquivo, transfira dados do Buscador Musical ou ajuste qualquer campo manualmente.'
+      ),
+    },
+    {
+      step: tr(
+        '03. Inyección binaria y descarga',
+        '03. Binary Injection & Download',
+        '03. Injeção binária e download'
+      ),
+      icon: Download,
+      body: tr(
+        'Verifica las tramas ID3v2.3 generadas y descarga el nuevo archivo .mp3 con sus metadatos, portada y letra incrustados.',
+        'Verify the generated ID3v2.3 frames and download the new .mp3 file with its metadata, cover art, and lyrics embedded.',
+        'Verifique os frames ID3v2.3 gerados e baixe o novo arquivo .mp3 com seus metadados, capa e letra incorporados.'
+      ),
+    },
+  ];
+
   return (
     <div>
       {/* 1. Hero Principal Centrado con Fondo Negro, Burbuja Gradiente RGB Arcoíris y Ondas Pulsantes Suaves */}
@@ -28,16 +128,13 @@ export const HomePage: React.FC = () => {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 overflow-hidden"
         >
-          {/* Rainbow RGB Gradient Bubble */}
           <div className="rgb-hero-bubble" />
           <div className="rgb-hero-bubble-inner" />
 
-          {/* Soft Pulsing Waves Radiating from Center */}
           <div className="rgb-pulse-wave" />
           <div className="rgb-pulse-wave rgb-pulse-wave-delay-1" />
           <div className="rgb-pulse-wave rgb-pulse-wave-delay-2" />
 
-          {/* Subtle radial vignette to keep pure black edges and high text contrast */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_15%,#000000_78%)]" />
         </div>
 
@@ -53,7 +150,13 @@ export const HomePage: React.FC = () => {
               <MetaPulseLogo className="w-5 h-5" />
               <span>METAPULSE AUDIO LAB</span>
               <span aria-hidden="true">·</span>
-              <span>ESTÁNDAR ID3v2.3 + USLT + APIC</span>
+              <span>
+                {tr(
+                  'ESTÁNDAR ID3v2.3 + USLT + APIC',
+                  'ID3v2.3 + USLT + APIC STANDARD',
+                  'PADRÃO ID3v2.3 + USLT + APIC'
+                )}
+              </span>
             </div>
 
             <h1
@@ -63,17 +166,27 @@ export const HomePage: React.FC = () => {
                 lineHeight: 1.08,
               }}
             >
-              Completa etiquetas, carátulas y letras de tus archivos MP3 en un entorno dedicado
+              {tr(
+                'Completa etiquetas, carátulas y letras de tus archivos MP3 en un entorno dedicado',
+                'Complete tags, cover art, and lyrics for your MP3 files in a dedicated studio',
+                'Complete tags, capas e letras dos seus arquivos MP3 em um ambiente dedicado'
+              )}
             </h1>
 
             <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-[62ch] mb-9">
-              MetaPulse separa la edición binaria de archivos MP3 y la consulta
-              discográfica en herramientas enfocadas. Carga un archivo como{' '}
+              {tr(
+                'MetaPulse separa la edición binaria de archivos MP3 y la consulta discográfica en herramientas enfocadas. Carga un archivo como ',
+                'MetaPulse separates binary MP3 tag editing and discography lookup into focused tools. Load a file like ',
+                'O MetaPulse separa a edição binária de arquivos MP3 e a consulta discográfica em ferramentas focadas. Carregue um arquivo como '
+              )}
               <span className="text-white font-mono-tabular">
                 &quot;REM - Losing My Religion.mp3&quot;
               </span>
-              , recupera sus metadatos desde catálogos en línea y descárgalo con su
-              nueva cabecera ID3v2.3 sin recodificar el audio.
+              {tr(
+                ', recupera sus metadatos desde catálogos en línea y descárgalo con su nueva cabecera ID3v2.3 sin recodificar el audio.',
+                ', retrieve its metadata from online catalogs, and download it with a new ID3v2.3 header without re-encoding the audio.',
+                ', recupere seus metadados de catálogos online e baixe-o com seu novo cabeçalho ID3v2.3 sem recodificar o áudio.'
+              )}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 mb-7">
@@ -81,7 +194,13 @@ export const HomePage: React.FC = () => {
                 to="/editor"
                 className="px-7 py-3.5 rounded-lg neon-btn-primary text-sm flex items-center gap-2 whitespace-nowrap"
               >
-                <span>Ir al Editor MP3</span>
+                <span>
+                  {tr(
+                    'Ir al Editor MP3',
+                    'Go to MP3 Editor',
+                    'Ir para o Editor MP3'
+                  )}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
@@ -89,23 +208,49 @@ export const HomePage: React.FC = () => {
                 to="/search"
                 className="px-6 py-3.5 rounded-lg bg-[#090C12]/90 border border-white/20 hover:border-[var(--neon-primary)] text-sm font-medium text-white transition-colors whitespace-nowrap"
               >
-                Abrir Buscador Musical
+                {tr(
+                  'Abrir Buscador Musical',
+                  'Open Music Search',
+                  'Abrir Buscador Musical'
+                )}
               </Link>
 
               <Link
                 to="/about"
                 className="px-4 py-3.5 text-sm font-medium text-slate-300 hover:text-white underline-offset-4 hover:underline whitespace-nowrap"
               >
-                Conocer cómo funciona
+                {tr(
+                  'Conocer cómo funciona',
+                  'Learn how it works',
+                  'Saiba como funciona'
+                )}
               </Link>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-300 font-mono-tabular">
-              <span>Lectura ID3v2.3 / ID3v2.4 / ID3v1</span>
+              <span>
+                {tr(
+                  'Lectura ID3v2.3 / ID3v2.4 / ID3v1',
+                  'Reads ID3v2.3 / ID3v2.4 / ID3v1',
+                  'Leitura ID3v2.3 / ID3v2.4 / ID3v1'
+                )}
+              </span>
               <span aria-hidden="true">·</span>
-              <span>Escritura ID3v2.3 UTF-16LE</span>
+              <span>
+                {tr(
+                  'Escritura ID3v2.3 UTF-16LE',
+                  'Writes ID3v2.3 UTF-16LE',
+                  'Escrita ID3v2.3 UTF-16LE'
+                )}
+              </span>
               <span aria-hidden="true">·</span>
-              <span className="neon-text">Iluminación Dinámica RGB</span>
+              <span className="neon-text">
+                {tr(
+                  'Iluminación Dinámica RGB',
+                  'Dynamic RGB Lighting',
+                  'Iluminação Dinâmica RGB'
+                )}
+              </span>
             </div>
           </motion.div>
 
@@ -121,17 +266,31 @@ export const HomePage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 mb-6 border-b border-white/10">
                 <div>
                   <span className="text-xs font-mono-tabular neon-text block">
-                    VISTA RÁPIDA DE TRANSFORMACIÓN DE METADATOS
+                    {tr(
+                      'VISTA RÁPIDA DE TRANSFORMACIÓN DE METADATOS',
+                      'METADATA TRANSFORMATION QUICK OVERVIEW',
+                      'VISÃO RÁPIDA DE TRANSFORMAÇÃO DE METADADOS'
+                    )}
                   </span>
                   <h2 className="text-lg font-semibold text-white mt-0.5">
-                    De un archivo MP3 con solo nombre a un contenedor etiquetado
+                    {tr(
+                      'De un archivo MP3 con solo nombre a un contenedor etiquetado',
+                      'From a filename-only MP3 to a fully tagged container',
+                      'De um arquivo MP3 apenas com nome para um contêiner etiquetado'
+                    )}
                   </h2>
                 </div>
                 <Link
                   to="/editor"
                   className="text-xs font-medium neon-text hover:underline flex items-center gap-1 whitespace-nowrap"
                 >
-                  <span>Probar con un archivo en el Editor</span>
+                  <span>
+                    {tr(
+                      'Probar con un archivo en el Editor',
+                      'Try with a file in the Editor',
+                      'Testar com um arquivo no Editor'
+                    )}
+                  </span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -140,50 +299,87 @@ export const HomePage: React.FC = () => {
                 <div className="p-5 rounded-lg bg-[#06080D]/95 border border-white/10 flex flex-col justify-between">
                   <div>
                     <div className="text-xs font-mono-tabular text-slate-400 mb-2">
-                      ENTRADA · ARCHIVO LOCAL
+                      {tr(
+                        'ENTRADA · ARCHIVO LOCAL',
+                        'INPUT · LOCAL FILE',
+                        'ENTRADA · ARQUIVO LOCAL'
+                      )}
                     </div>
                     <div className="text-sm font-mono-tabular font-semibold text-white mb-2">
                       REM - Losing My Religion.mp3
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Archivo MP3 válido sin etiquetas internas o con campos
-                      incompletos.
+                      {tr(
+                        'Archivo MP3 válido sin etiquetas internas o con campos incompletos.',
+                        'Valid MP3 file with no internal tags or incomplete metadata fields.',
+                        'Arquivo MP3 válido sem tags internas ou com campos incompletos.'
+                      )}
                     </p>
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-500">
-                    Cabecera previa: 0 bytes ID3
+                    {tr(
+                      'Cabecera previa: 0 bytes ID3',
+                      'Previous header: 0 bytes ID3',
+                      'Cabeçalho anterior: 0 bytes ID3'
+                    )}
                   </div>
                 </div>
 
                 <div className="p-5 rounded-lg bg-[#06080D]/95 border border-white/10 flex flex-col justify-between">
                   <div>
                     <div className="text-xs font-mono-tabular neon-text mb-2">
-                      PROCESO · BÚSQUEDA Y REVISIÓN
+                      {tr(
+                        'PROCESO · BÚSQUEDA Y REVISIÓN',
+                        'PROCESS · LOOKUP & REVIEW',
+                        'PROCESSO · BUSCA E REVISÃO'
+                      )}
                     </div>
                     <div className="text-sm font-semibold text-white mb-2">
-                      Identificación por nombre o consulta manual
+                      {tr(
+                        'Identificación por nombre o consulta manual',
+                        'Filename identification or manual query',
+                        'Identificação por nome ou consulta manual'
+                      )}
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Recupera candidatos desde catálogos en línea y permite editar
-                      cualquier etiqueta antes de escribir en el archivo.
+                      {tr(
+                        'Recupera candidatos desde catálogos en línea y permite editar cualquier etiqueta antes de escribir en el archivo.',
+                        'Retrieves candidates from online catalogs and lets you edit any tag before writing to the file.',
+                        'Recupera candidatos de catálogos online e permite editar qualquer tag antes de gravar no arquivo.'
+                      )}
                     </p>
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular text-slate-300">
-                    R.E.M. · Out of Time · 1991 · Pista 4/11
+                    {tr(
+                      'R.E.M. · Out of Time · 1991 · Pista 4/11',
+                      'R.E.M. · Out of Time · 1991 · Track 4/11',
+                      'R.E.M. · Out of Time · 1991 · Faixa 4/11'
+                    )}
                   </div>
                 </div>
 
                 <div className="p-5 rounded-lg bg-[#06080D]/95 border border-[var(--neon-primary)] flex flex-col justify-between">
                   <div>
                     <div className="text-xs font-mono-tabular neon-text mb-2">
-                      SALIDA · DESCARGA DIRECTA
+                      {tr(
+                        'SALIDA · DESCARGA DIRECTA',
+                        'OUTPUT · DIRECT DOWNLOAD',
+                        'SAÍDA · DOWNLOAD DIRETO'
+                      )}
                     </div>
                     <div className="text-sm font-semibold text-white mb-2">
-                      Cabecera binaria ID3v2.3 inyectada
+                      {tr(
+                        'Cabecera binaria ID3v2.3 inyectada',
+                        'Injected ID3v2.3 binary header',
+                        'Cabeçalho binário ID3v2.3 injetado'
+                      )}
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Incluye tramas de texto UTF-16LE, letra en trama USLT y
-                      carátula frontal APIC sin alterar los frames de audio MPEG.
+                      {tr(
+                        'Incluye tramas de texto UTF-16LE, letra en trama USLT y carátula frontal APIC sin alterar los frames de audio MPEG.',
+                        'Includes UTF-16LE text frames, lyrics in USLT frame, and APIC front cover without altering MPEG audio frames.',
+                        'Inclui frames de texto UTF-16LE, letra no frame USLT e capa frontal APIC sem alterar os frames de áudio MPEG.'
+                      )}
                     </p>
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/5 text-xs font-mono-tabular neon-text">
@@ -207,36 +403,23 @@ export const HomePage: React.FC = () => {
             className="mb-10"
           >
             <p className="text-xs font-mono-tabular neon-text tracking-wider mb-2">
-              CAPACIDADES DE LA PLATAFORMA
+              {tr(
+                'CAPACIDADES DE LA PLATAFORMA',
+                'PLATFORM CAPABILITIES',
+                'CAPACIDADES DA PLATAFORMA'
+              )}
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white balance-text">
-              Herramientas especializadas para edición de etiquetas y consulta musical
+              {tr(
+                'Herramientas especializadas para edición de etiquetas y consulta musical',
+                'Specialized tools for tag editing and musical lookup',
+                'Ferramentas especializadas para edição de tags e consulta musical'
+              )}
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Sliders,
-                title: 'Edición ID3v2.3 en el navegador',
-                desc: 'Modifica título (TIT2), artista (TPE1), álbum (TALB), año (TYER), pista (TRCK), género (TCON), compositor (TCOM) y sello (TPUB).',
-              },
-              {
-                icon: Image,
-                title: 'Carátulas APIC y Letras USLT',
-                desc: 'Incrusta portadas de álbumes o imágenes personalizadas junto con la transcripción de la letra en la trama estándar USLT.',
-              },
-              {
-                icon: Search,
-                title: 'Buscador de canciones, artistas y álbumes',
-                desc: 'Consulta discografías, años de publicación y listados de pistas en una vista dedicada y envía metadatos al editor con un clic.',
-              },
-              {
-                icon: Disc3,
-                title: 'Vistas previas cuando están disponibles',
-                desc: 'Escucha fragmentos de referencia entregados por el catálogo cuando la fuente lo permite, o consulta la ficha técnica completa.',
-              },
-            ].map((feat, idx) => {
+            {capabilities.map((feat, idx) => {
               const IconComponent = feat.icon;
               return (
                 <motion.div
@@ -274,31 +457,23 @@ export const HomePage: React.FC = () => {
             className="mb-10"
           >
             <p className="text-xs font-mono-tabular neon-text tracking-wider mb-2">
-              FLUJO DE TRABAJO PASO A PASO
+              {tr(
+                'FLUJO DE TRABAJO PASO A PASO',
+                'STEP-BY-STEP WORKFLOW',
+                'FLUXO DE TRABALHO PASSO A PASSO'
+              )}
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white balance-text">
-              Cómo funciona el proceso en tres pasos
+              {tr(
+                'Cómo funciona el proceso en tres pasos',
+                'How the three-step process works',
+                'Como funciona o processo em três passos'
+              )}
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                step: '01. Selección del archivo MP3',
-                icon: FileAudio,
-                body: 'Sube un archivo .mp3 desde tu dispositivo o utiliza uno de los contenedores de prueba incluidos en el Editor para explorar el flujo.',
-              },
-              {
-                step: '02. Búsqueda y revisión de etiquetas',
-                icon: Sparkles,
-                body: 'Compara las coincidencias sugeridas por nombre de archivo, transfiere datos desde el Buscador Musical o ajusta cualquier campo manualmente.',
-              },
-              {
-                step: '03. Inyección binaria y descarga',
-                icon: Download,
-                body: 'Verifica las tramas ID3v2.3 generadas y descarga el nuevo archivo .mp3 con sus metadatos, portada y letra incrustados.',
-              },
-            ].map((item, idx) => {
+            {steps.map((item, idx) => {
               const StepIcon = item.icon;
               return (
                 <motion.div
@@ -331,15 +506,25 @@ export const HomePage: React.FC = () => {
           <div className="bg-[#090C12]/92 backdrop-blur-md neon-border-active rounded-xl p-8 lg:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div>
               <p className="text-xs font-mono-tabular neon-text mb-2">
-                ACCESO DIRECTO A LAS HERRAMIENTAS
+                {tr(
+                  'ACCESO DIRECTO A LAS HERRAMIENTAS',
+                  'DIRECT ACCESS TO TOOLS',
+                  'ACESSO DIRETO ÀS FERRAMENTAS'
+                )}
               </p>
               <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                Elige tu entorno de trabajo en MetaPulse
+                {tr(
+                  'Elige tu entorno de trabajo en MetaPulse',
+                  'Choose your workspace in MetaPulse',
+                  'Escolha seu ambiente de trabalho no MetaPulse'
+                )}
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-                Accede al Editor MP3 para modificar y descargar archivos etiquetados,
-                o abre el Buscador Musical para consultar información de canciones,
-                artistas y álbumes.
+                {tr(
+                  'Accede al Editor MP3 para modificar y descargar archivos etiquetados, o abre el Buscador Musical para consultar información de canciones, artistas y álbumes.',
+                  'Access the MP3 Editor to modify and download tagged files, or open Music Search to explore songs, artists, and albums.',
+                  'Acesse o Editor MP3 para modificar e baixar arquivos etiquetados, ou abra o Buscador Musical para consultar informações de músicas, artistas e álbuns.'
+                )}
               </p>
             </div>
 
@@ -348,14 +533,24 @@ export const HomePage: React.FC = () => {
                 to="/editor"
                 className="px-5 py-3 rounded-lg neon-btn-primary text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap"
               >
-                <span>Abrir Editor MP3</span>
+                <span>
+                  {tr(
+                    'Abrir Editor MP3',
+                    'Open MP3 Editor',
+                    'Abrir Editor MP3'
+                  )}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/search"
                 className="px-5 py-3 rounded-lg bg-[#090C12] border border-white/15 hover:border-[var(--neon-primary)] text-xs sm:text-sm font-medium text-white transition-colors whitespace-nowrap"
               >
-                Ir al Buscador Musical
+                {tr(
+                  'Ir al Buscador Musical',
+                  'Go to Music Search',
+                  'Ir para o Buscador Musical'
+                )}
               </Link>
             </div>
           </div>

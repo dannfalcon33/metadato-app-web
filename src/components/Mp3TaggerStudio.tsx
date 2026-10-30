@@ -37,6 +37,7 @@ import {
   searchTracksOnline,
 } from '../services/musicCatalog';
 import { CoverArtVisual } from './CoverArtVisual';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface Mp3TaggerStudioProps {
   externalSelectedTrack: CatalogTrackResult | null;
@@ -73,6 +74,8 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
   externalSelectedTrack,
   onClearExternalTrack,
 }) => {
+  const { tr } = useLanguage();
+
   const [loadedFileName, setLoadedFileName] = useState<string>('');
   const [loadedFileSize, setLoadedFileSize] = useState<number>(0);
   const [originalId3Status, setOriginalId3Status] = useState<string>('');
@@ -171,7 +174,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
       setMp3ArrayBuffer(buf);
       setLoadedFileName(generatedFile.name);
       setLoadedFileSize(generatedFile.size);
-      setOriginalId3Status('Contenedor MP3 de trabajo listo');
+      setOriginalId3Status(
+        tr(
+          'Contenedor MP3 de trabajo listo',
+          'Working MP3 container ready',
+          'Contêiner MP3 de trabalho pronto'
+        )
+      );
       setPreservedFrames([]);
     }
 
@@ -193,7 +202,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
       genre: track.genre,
       composer: track.artist,
       publisher: track.publisher || `${track.country || 'Global'} Release`,
-      comment: `Etiquetado con MetaPulse ID3v2.3`,
+      comment: `MetaPulse ID3v2.3`,
       lyrics: fetchedLyrics,
       coverUrl: track.coverUrl,
       coverBytes: coverData?.bytes,
@@ -202,8 +211,16 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
 
     setAutoMatchNotice(
       fromExplorer
-        ? `Metadatos precompletados desde el Buscador Musical para "${track.artist} - ${track.title}". Revisa los campos antes de descargar.`
-        : `Autocompletado web de etiquetas, carátula y letra completado para "${track.artist} - ${track.title}" (${track.album}, ${track.year}).`
+        ? tr(
+            `Metadatos precompletados desde el Buscador Musical para "${track.artist} - ${track.title}". Revisa los campos antes de descargar.`,
+            `Metadata prefilled from Music Search for "${track.artist} - ${track.title}". Review fields before downloading.`,
+            `Metadados preenchidos pelo Buscador Musical para "${track.artist} - ${track.title}". Revise os campos antes de baixar.`
+          )
+        : tr(
+            `Autocompletado web de etiquetas, carátula y letra completado para "${track.artist} - ${track.title}" (${track.album}, ${track.year}).`,
+            `Web autocomplete of tags, cover art, and lyrics completed for "${track.artist} - ${track.title}" (${track.album}, ${track.year}).`,
+            `Preenchimento automático web de tags, capa e letra concluído para "${track.artist} - ${track.title}" (${track.album}, ${track.year}).`
+          )
     );
   };
 
@@ -233,7 +250,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
 
     if (!isMp3Extension && !isMp3Mime) {
       setFileErrorNotice(
-        `El archivo "${file.name}" no es un archivo MP3 válido. Selecciona un archivo con extensión .mp3.`
+        tr(
+          `El archivo "${file.name}" no es un archivo MP3 válido. Selecciona un archivo con extensión .mp3.`,
+          `File "${file.name}" is not a valid MP3 file. Please select a file with the .mp3 extension.`,
+          `O arquivo "${file.name}" não é um arquivo MP3 válido. Selecione um arquivo com extensão .mp3.`
+        )
       );
       return;
     }
@@ -266,7 +287,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
     searchAbortRef.current = controller;
 
     if (parsed.hasExistingTags && parsed.metadata.title && parsed.metadata.artist) {
-      setOriginalId3Status(`${parsed.id3Version} detectado en el archivo`);
+      setOriginalId3Status(
+        tr(
+          `${parsed.id3Version} detectado en el archivo`,
+          `${parsed.id3Version} detected in file`,
+          `${parsed.id3Version} detectado no arquivo`
+        )
+      );
       const existingLyrics =
         parsed.metadata.lyrics ||
         (await fetchTrackLyricsOnline(
@@ -291,7 +318,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
         coverMimeType: parsed.metadata.coverMimeType,
       });
       setAutoMatchNotice(
-        `Se leyeron las etiquetas ${parsed.id3Version} existentes del archivo y se sincronizó su letra (USLT).`
+        tr(
+          `Se leyeron las etiquetas ${parsed.id3Version} existentes del archivo y se sincronizó su letra (USLT).`,
+          `Existing ${parsed.id3Version} tags were read from the file and its lyrics (USLT) were synchronized.`,
+          `As tags ${parsed.id3Version} existentes do arquivo foram lidas e sua letra (USLT) foi sincronizada.`
+        )
       );
       try {
         const matches = await searchTracksOnline(
@@ -306,12 +337,24 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
     } else {
       setOriginalId3Status(
         isSample
-          ? 'Archivo MP3 de prueba sin etiquetas (0 bytes ID3)'
-          : 'Sin etiquetas ID3 — Búsqueda web activada'
+          ? tr(
+              'Archivo MP3 de prueba sin etiquetas (0 bytes ID3)',
+              'Sample untagged MP3 file (0 bytes ID3)',
+              'Arquivo MP3 de teste sem tags (0 bytes ID3)'
+            )
+          : tr(
+              'Sin etiquetas ID3 — Búsqueda web activada',
+              'No ID3 tags — Web lookup activated',
+              'Sem tags ID3 — Busca web ativada'
+            )
       );
       setIsAutoSearching(true);
       setAutoMatchNotice(
-        `Analizando "${file.name}" y buscando carátula, letra (USLT) y etiquetas en la red...`
+        tr(
+          `Analizando "${file.name}" y buscando carátula, letra (USLT) y etiquetas en la red...`,
+          `Analyzing "${file.name}" and searching for cover art, lyrics (USLT), and tags online...`,
+          `Analisando "${file.name}" e buscando capa, letra (USLT) e tags online...`
+        )
       );
 
       try {
@@ -338,7 +381,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
             lyrics: fallbackLyrics,
           });
           setAutoMatchNotice(
-            `No se hallaron coincidencias exactas en el catálogo en línea. Se extrajo "${guessedArtist} - ${guessedTitle}" del nombre del archivo para edición manual.`
+            tr(
+              `No se hallaron coincidencias exactas en el catálogo en línea. Se extrajo "${guessedArtist} - ${guessedTitle}" del nombre del archivo para edición manual.`,
+              `No exact matches found in online catalog. Extracted "${guessedArtist} - ${guessedTitle}" from filename for manual editing.`,
+              `Nenhuma correspondência exata encontrada no catálogo online. Extraído "${guessedArtist} - ${guessedTitle}" do nome do arquivo para edição manual.`
+            )
           );
         }
       } catch (err) {
@@ -360,7 +407,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
     searchAbortRef.current = controller;
 
     setIsAutoSearching(true);
-    setAutoMatchNotice(`Buscando coincidencias y letra para "${manualQuery}"...`);
+    setAutoMatchNotice(
+      tr(
+        `Buscando coincidencias y letra para "${manualQuery}"...`,
+        `Searching matches and lyrics for "${manualQuery}"...`,
+        `Buscando correspondências e letra para "${manualQuery}"...`
+      )
+    );
 
     try {
       const matches = await searchTracksOnline(
@@ -374,13 +427,23 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
         await applyCatalogTrackToEditor(matches[0], false);
       } else {
         setAutoMatchNotice(
-          `No se encontraron resultados en el catálogo para "${manualQuery}". Puedes editar los campos manualmente.`
+          tr(
+            `No se encontraron resultados en el catálogo para "${manualQuery}". Puedes editar los campos manualmente.`,
+            `No catalog results found for "${manualQuery}". You can edit the fields manually.`,
+            `Nenhum resultado encontrado no catálogo para "${manualQuery}". Você pode editar os campos manualmente.`
+          )
         );
       }
     } catch (err) {
       if ((err as Error)?.name !== 'AbortError') {
         setIsAutoSearching(false);
-        setAutoMatchNotice('Error de red al consultar el catálogo.');
+        setAutoMatchNotice(
+          tr(
+            'Error de red al consultar el catálogo.',
+            'Network error while querying catalog.',
+            'Erro de rede ao consultar o catálogo.'
+          )
+        );
       }
     }
   };
@@ -410,7 +473,6 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
 
     try {
       const taggedBlob = await writeMp3MetadataToBlob(mp3ArrayBuffer, metadata);
-      // Perform Post-Write Binary Verification by re-reading the generated Blob
       const verification = await verifyWrittenMp3Blob(taggedBlob);
       setPostWriteReport(verification);
 
@@ -434,7 +496,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
       setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
 
       setExportSuccessMessage(
-        `Archivo "${downloadFileName}" (${(taggedBlob.size / 1024).toFixed(1)} KB) generado y descargado correctamente.`
+        tr(
+          `Archivo "${downloadFileName}" (${(taggedBlob.size / 1024).toFixed(1)} KB) generado y descargado correctamente.`,
+          `File "${downloadFileName}" (${(taggedBlob.size / 1024).toFixed(1)} KB) generated and downloaded successfully.`,
+          `Arquivo "${downloadFileName}" (${(taggedBlob.size / 1024).toFixed(1)} KB) gerado e baixado com sucesso.`
+        )
       );
     } finally {
       setIsExporting(false);
@@ -465,10 +531,18 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
         >
           <div>
             <p className="text-xs font-mono-tabular neon-text tracking-wider mb-2">
-              ESTUDIO DEDICADO DE ETIQUETADO BINARIO MP3
+              {tr(
+                'ESTUDIO DEDICADO DE ETIQUETADO BINARIO MP3',
+                'DEDICATED BINARY MP3 TAGGING STUDIO',
+                'ESTÚDIO DEDICADO DE TAGUEAMENTO BINÁRIO MP3'
+              )}
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white balance-text">
-              Editor de Metadatos ID3v2.3, Letras USLT y Carátula APIC
+              {tr(
+                'Editor de Metadatos ID3v2.3, Letras USLT y Carátula APIC',
+                'ID3v2.3 Metadata, USLT Lyrics & APIC Cover Art Editor',
+                'Editor de Metadados ID3v2.3, Letras USLT e Capa APIC'
+              )}
             </h1>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -477,7 +551,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
               className="px-3.5 py-2 rounded-lg bg-[var(--surface-card)] border border-white/15 hover:border-[var(--neon-primary)] text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors whitespace-nowrap"
             >
               <Compass className="w-3.5 h-3.5 neon-text" />
-              <span>Buscar canciones en el Buscador Musical</span>
+              <span>
+                {tr(
+                  'Buscar canciones en el Buscador Musical',
+                  'Search songs in Music Search',
+                  'Buscar músicas no Buscador Musical'
+                )}
+              </span>
             </Link>
           </div>
         </motion.div>
@@ -510,18 +590,34 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
             <div>
               <div className="flex items-center justify-between gap-4 mb-3">
                 <span className="text-sm font-semibold text-white">
-                  1. Cargar archivo MP3 desde tu equipo
+                  {tr(
+                    '1. Cargar archivo MP3 desde tu equipo',
+                    '1. Load MP3 file from your device',
+                    '1. Carregar arquivo MP3 do seu dispositivo'
+                  )}
                 </span>
                 <FileAudio className="w-5 h-5 neon-text shrink-0" />
               </div>
               <p className="text-xs text-slate-300 leading-relaxed mb-5">
-                Selecciona o arrastra un archivo{' '}
-                <span className="text-white font-mono-tabular">.mp3</span>. Si no
-                contiene etiquetas ID3 internas (por ejemplo{' '}
+                {tr(
+                  'Selecciona o arrastra un archivo ',
+                  'Select or drag and drop an ',
+                  'Selecione ou arraste um arquivo '
+                )}
+                <span className="text-white font-mono-tabular">.mp3</span>
+                {tr(
+                  '. Si no contiene etiquetas ID3 internas (por ejemplo ',
+                  ' file. If it has no internal ID3 tags (for example ',
+                  '. Se não contiver tags ID3 internas (por exemplo '
+                )}
                 <span className="text-white font-mono-tabular">
                   &quot;REM - Losing My Religion.mp3&quot;
                 </span>
-                ), el sistema analiza el nombre y consulta coincidencias en línea.
+                {tr(
+                  '), el sistema analiza el nombre y consulta coincidencias en línea.',
+                  '), the system parses the filename and queries online matches.',
+                  '), o sistema analisa o nome e consulta correspondências online.'
+                )}
               </p>
             </div>
 
@@ -535,7 +631,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   if (selected) validateAndProcessFile(selected);
                 }}
                 className="hidden"
-                aria-label="Seleccionar archivo MP3 local"
+                aria-label={tr(
+                  'Seleccionar archivo MP3 local',
+                  'Select local MP3 file',
+                  'Selecionar arquivo MP3 local'
+                )}
               />
               <button
                 type="button"
@@ -543,7 +643,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 className="w-full py-3 px-4 rounded-lg neon-btn-primary text-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <Upload className="w-4 h-4 shrink-0" />
-                <span>Seleccionar archivo .MP3 local</span>
+                <span>
+                  {tr(
+                    'Seleccionar archivo .MP3 local',
+                    'Select local .MP3 file',
+                    'Selecionar arquivo .MP3 local'
+                  )}
+                </span>
               </button>
             </div>
           </motion.div>
@@ -558,15 +664,26 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <span className="text-sm font-semibold text-white">
-                  2. Archivos MP3 de prueba sin etiquetas o búsqueda directa
+                  {tr(
+                    '2. Archivos MP3 de prueba sin etiquetas o búsqueda directa',
+                    '2. Sample untagged MP3 files or direct search',
+                    '2. Arquivos MP3 de teste sem tags ou busca direta'
+                  )}
                 </span>
                 <span className="text-xs text-slate-400 font-mono-tabular">
-                  Simulador de autodetección
+                  {tr(
+                    'Simulador de autodetección',
+                    'Auto-detection simulator',
+                    'Simulador de autodetecção'
+                  )}
                 </span>
               </div>
               <p className="text-xs text-slate-300 mb-4">
-                Prueba la detección automática con un contenedor MP3 sin metadatos o
-                busca cualquier canción por título y artista:
+                {tr(
+                  'Prueba la detección automática con un contenedor MP3 sin metadatos o busca cualquier canción por título y artista:',
+                  'Test automatic detection with an untagged MP3 container or search any song by title and artist:',
+                  'Teste a detecção automática com um contêiner MP3 sem metadados ou busque qualquer música por título e artista:'
+                )}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
@@ -587,7 +704,9 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                       }`}
                     >
                       <span className="truncate">{sampleName}</span>
-                      <span className="text-[11px] opacity-75 shrink-0">Cargar</span>
+                      <span className="text-[11px] opacity-75 shrink-0">
+                        {tr('Cargar', 'Load', 'Carregar')}
+                      </span>
                     </button>
                   );
                 })}
@@ -601,8 +720,16 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   type="text"
                   value={manualQuery}
                   onChange={(e) => setManualQuery(e.target.value)}
-                  aria-label="Buscar canción en línea para autocompletar etiquetas"
-                  placeholder="Buscar otra canción en la red (ej. Radiohead - Karma Police)..."
+                  aria-label={tr(
+                    'Buscar canción en línea para autocompletar etiquetas',
+                    'Search song online to autocomplete tags',
+                    'Buscar música online para autocompletar tags'
+                  )}
+                  placeholder={tr(
+                    'Buscar otra canción en la red (ej. Radiohead - Karma Police)...',
+                    'Search another song online (e.g. Radiohead - Karma Police)...',
+                    'Buscar outra música na rede (ex. Radiohead - Karma Police)...'
+                  )}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#090C12] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -612,7 +739,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 className="px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-medium text-white transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 neon-text" />
-                <span>{isAutoSearching ? 'Buscando...' : 'Autocompletar'}</span>
+                <span>
+                  {isAutoSearching
+                    ? tr('Buscando...', 'Searching...', 'Buscando...')
+                    : tr('Autocompletar', 'Autocomplete', 'Autocompletar')}
+                </span>
               </button>
             </form>
           </motion.div>
@@ -625,9 +756,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-              <span className="text-slate-400">Archivo activo:</span>
+              <span className="text-slate-400">
+                {tr('Archivo activo:', 'Active file:', 'Arquivo ativo:')}
+              </span>
               <span className="font-mono-tabular font-semibold text-white">
-                {loadedFileName || 'Ninguno'}
+                {loadedFileName || tr('Ninguno', 'None', 'Nenhum')}
               </span>
               <span aria-hidden="true" className="text-slate-600">·</span>
               <span className="font-mono-tabular text-slate-300">
@@ -648,7 +781,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
           {candidateMatches.length > 0 && (
             <div className="pt-4">
               <div className="text-xs text-slate-300 mb-2.5">
-                Coincidencias encontradas (selecciona cualquier edición para revisar sus etiquetas, letra y carátula antes de guardar):
+                {tr(
+                  'Coincidencias encontradas (selecciona cualquier edición para revisar sus etiquetas, letra y carátula antes de guardar):',
+                  'Matches found (select any release to review its tags, lyrics, and cover art before saving):',
+                  'Correspondências encontradas (selecione qualquer edição para revisar suas tags, letra e capa antes de salvar):'
+                )}
               </div>
               <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
                 {candidateMatches.map((cand) => {
@@ -679,7 +816,8 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                           {cand.artist} — {cand.title}
                         </div>
                         <div className="text-[11px] text-slate-400 truncate font-mono-tabular">
-                          {cand.album} · {cand.year} · Pista {cand.trackNumber}
+                          {cand.album} · {cand.year} ·{' '}
+                          {tr('Pista', 'Track', 'Faixa')} {cand.trackNumber}
                         </div>
                       </div>
                     </button>
@@ -696,7 +834,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
           <div className="lg:col-span-4 bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-white">
-                Carátula frontal (Frame APIC)
+                {tr(
+                  'Carátula frontal (Frame APIC)',
+                  'Front Cover Art (APIC Frame)',
+                  'Capa frontal (Frame APIC)'
+                )}
               </h2>
               <span className="text-xs font-mono-tabular text-slate-400">
                 600 × 600 px
@@ -706,7 +848,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
             <div className="aspect-square w-full rounded-lg overflow-hidden border border-white/10 mb-4 bg-[#07090E]">
               <CoverArtVisual
                 src={metadata.coverUrl}
-                alt={`Carátula de ${metadata.album || metadata.title || 'MP3'}`}
+                alt={`Cover ${metadata.album || metadata.title || 'MP3'}`}
                 title={metadata.title}
                 artist={metadata.artist}
                 className="w-full h-full"
@@ -720,7 +862,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 accept="image/jpeg,image/png,image/webp"
                 onChange={handleCustomCoverUpload}
                 className="hidden"
-                aria-label="Subir imagen de carátula personalizada"
+                aria-label={tr(
+                  'Subir imagen de carátula personalizada',
+                  'Upload custom cover art image',
+                  'Enviar imagem de capa personalizada'
+                )}
               />
               <button
                 type="button"
@@ -728,7 +874,13 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 className="w-full py-2.5 px-4 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-medium text-white transition-colors flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <ImagePlus className="w-4 h-4 neon-text" />
-                <span>Reemplazar carátula por imagen local</span>
+                <span>
+                  {tr(
+                    'Reemplazar carátula por imagen local',
+                    'Replace cover art with local image',
+                    'Substituir capa por imagem local'
+                  )}
+                </span>
               </button>
 
               {previewAudioUrl ? (
@@ -740,31 +892,51 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   {isPlayingPreview ? (
                     <>
                       <Pause className="w-4 h-4 neon-text" />
-                      <span>Pausar vista previa de referencia</span>
+                      <span>
+                        {tr(
+                          'Pausar vista previa de referencia',
+                          'Pause reference preview',
+                          'Pausar prévia de referência'
+                        )}
+                      </span>
                     </>
                   ) : (
                     <>
                       <Play className="w-4 h-4 neon-text" />
-                      <span>Escuchar vista previa disponible</span>
+                      <span>
+                        {tr(
+                          'Escuchar vista previa disponible',
+                          'Listen to available preview',
+                          'Ouvir prévia disponível'
+                        )}
+                      </span>
                     </>
                   )}
                 </button>
               ) : (
                 <div className="py-2 px-3 rounded-lg bg-[#090C12] border border-white/5 text-[11px] text-slate-400 text-center">
-                  Vista previa de audio no disponible en la fuente para esta edición
+                  {tr(
+                    'Vista previa de audio no disponible en la fuente para esta edición',
+                    'Audio preview not available from source for this release',
+                    'Prévia de áudio não disponível na fonte para esta edição'
+                  )}
                 </div>
               )}
             </div>
 
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-slate-400 space-y-1 font-mono-tabular">
               <div className="flex justify-between">
-                <span>Formato de portada:</span>
+                <span>
+                  {tr('Formato de portada:', 'Cover format:', 'Formato da capa:')}
+                </span>
                 <span className="text-slate-200">
                   {metadata.coverMimeType || 'image/jpeg'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Descriptor ID3:</span>
+                <span>
+                  {tr('Descriptor ID3:', 'ID3 Descriptor:', 'Descritor ID3:')}
+                </span>
                 <span className="text-slate-200">0x03 Front Cover</span>
               </div>
             </div>
@@ -774,7 +946,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
           <div className="lg:col-span-5 bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-semibold text-white">
-                Etiquetas y Letra del archivo MP3
+                {tr(
+                  'Etiquetas y Letra del archivo MP3',
+                  'MP3 File Tags & Lyrics',
+                  'Tags e Letra do arquivo MP3'
+                )}
               </h2>
               <button
                 type="button"
@@ -782,7 +958,9 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Limpiar campos</span>
+                <span>
+                  {tr('Limpiar campos', 'Clear fields', 'Limpar campos')}
+                </span>
               </button>
             </div>
 
@@ -792,7 +970,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   htmlFor="field-title"
                   className="block text-xs text-slate-300 mb-1.5"
                 >
-                  Título de la canción{' '}
+                  {tr('Título de la canción', 'Song Title', 'Título da música')}{' '}
                   <span className="font-mono-tabular text-slate-400">(TIT2)</span>
                 </label>
                 <input
@@ -800,7 +978,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   type="text"
                   value={metadata.title}
                   onChange={(e) => handleFieldChange('title', e.target.value)}
-                  placeholder="Ej. Losing My Religion"
+                  placeholder="Losing My Religion"
                   className="w-full px-3.5 py-2 rounded-lg bg-[#090C12] border border-white/10 text-sm text-white focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -810,7 +988,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   htmlFor="field-artist"
                   className="block text-xs text-slate-300 mb-1.5"
                 >
-                  Artista principal{' '}
+                  {tr('Artista principal', 'Lead Artist', 'Artista principal')}{' '}
                   <span className="font-mono-tabular text-slate-400">(TPE1)</span>
                 </label>
                 <input
@@ -818,7 +996,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   type="text"
                   value={metadata.artist}
                   onChange={(e) => handleFieldChange('artist', e.target.value)}
-                  placeholder="Ej. R.E.M."
+                  placeholder="R.E.M."
                   className="w-full px-3.5 py-2 rounded-lg bg-[#090C12] border border-white/10 text-sm text-white focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -828,7 +1006,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   htmlFor="field-album"
                   className="block text-xs text-slate-300 mb-1.5"
                 >
-                  Álbum{' '}
+                  {tr('Álbum', 'Album', 'Álbum')}{' '}
                   <span className="font-mono-tabular text-slate-400">(TALB)</span>
                 </label>
                 <input
@@ -836,7 +1014,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   type="text"
                   value={metadata.album}
                   onChange={(e) => handleFieldChange('album', e.target.value)}
-                  placeholder="Ej. Out of Time"
+                  placeholder="Out of Time"
                   className="w-full px-3.5 py-2 rounded-lg bg-[#090C12] border border-white/10 text-sm text-white focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -847,7 +1025,8 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     htmlFor="field-year"
                     className="block text-xs text-slate-300 mb-1.5"
                   >
-                    Año <span className="font-mono-tabular text-slate-400">(TYER)</span>
+                    {tr('Año', 'Year', 'Ano')}{' '}
+                    <span className="font-mono-tabular text-slate-400">(TYER)</span>
                   </label>
                   <input
                     id="field-year"
@@ -864,7 +1043,8 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     htmlFor="field-track"
                     className="block text-xs text-slate-300 mb-1.5"
                   >
-                    Pista <span className="font-mono-tabular text-slate-400">(TRCK)</span>
+                    {tr('Pista', 'Track', 'Faixa')}{' '}
+                    <span className="font-mono-tabular text-slate-400">(TRCK)</span>
                   </label>
                   <input
                     id="field-track"
@@ -881,7 +1061,8 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     htmlFor="field-genre"
                     className="block text-xs text-slate-300 mb-1.5"
                   >
-                    Género <span className="font-mono-tabular text-slate-400">(TCON)</span>
+                    {tr('Género', 'Genre', 'Gênero')}{' '}
+                    <span className="font-mono-tabular text-slate-400">(TCON)</span>
                   </label>
                   <input
                     id="field-genre"
@@ -900,7 +1081,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     htmlFor="field-composer"
                     className="block text-xs text-slate-300 mb-1.5"
                   >
-                    Compositor{' '}
+                    {tr('Compositor', 'Composer', 'Compositor')}{' '}
                     <span className="font-mono-tabular text-slate-400">(TCOM)</span>
                   </label>
                   <input
@@ -918,7 +1099,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     htmlFor="field-publisher"
                     className="block text-xs text-slate-300 mb-1.5"
                   >
-                    Sello / Editorial{' '}
+                    {tr(
+                      'Sello / Editorial',
+                      'Label / Publisher',
+                      'Gravadora / Editora'
+                    )}{' '}
                     <span className="font-mono-tabular text-slate-400">(TPUB)</span>
                   </label>
                   <input
@@ -941,7 +1126,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   >
                     <FileText className="w-3.5 h-3.5 neon-text" />
                     <span>
-                      Letra del tema{' '}
+                      {tr('Letra del tema', 'Song Lyrics', 'Letra da música')}{' '}
                       <span className="font-mono-tabular text-slate-400">(USLT)</span>
                     </span>
                   </label>
@@ -954,8 +1139,16 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     <Sparkles className="w-3 h-3" />
                     <span>
                       {isFetchingLyrics
-                        ? 'Buscando letra...'
-                        : 'Buscar letra en la red'}
+                        ? tr(
+                            'Buscando letra...',
+                            'Fetching lyrics...',
+                            'Buscando letra...'
+                          )
+                        : tr(
+                            'Buscar letra en la red',
+                            'Fetch lyrics online',
+                            'Buscar letra na rede'
+                          )}
                     </span>
                   </button>
                 </div>
@@ -964,12 +1157,25 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   rows={6}
                   value={metadata.lyrics}
                   onChange={(e) => handleFieldChange('lyrics', e.target.value)}
-                  placeholder="La letra de la canción se autocompleta aquí o puedes pegarla manualmente para incrustarla en el frame binario USLT del MP3..."
+                  placeholder={tr(
+                    'La letra de la canción se autocompleta aquí o puedes pegarla manualmente para incrustarla en el frame binario USLT del MP3...',
+                    'Song lyrics are autocompleted here or you can paste them manually to embed inside the MP3 binary USLT frame...',
+                    'A letra da música é preenchida automaticamente aqui ou você pode colá-la manualmente para incorporá-la no frame binário USLT do MP3...'
+                  )}
                   className="w-full px-3.5 py-2.5 rounded-lg bg-[#090C12] border border-white/10 text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-[var(--neon-primary)] resize-y font-sans"
                 />
                 <div className="flex items-center justify-between text-xs text-slate-400 font-mono-tabular mt-1">
-                  <span>Incrustación estándar ID3v2.3 USLT (UTF-16)</span>
-                  <span>{metadata.lyrics.length} caracteres</span>
+                  <span>
+                    {tr(
+                      'Incrustación estándar ID3v2.3 USLT (UTF-16)',
+                      'Standard ID3v2.3 USLT embedding (UTF-16)',
+                      'Incorporação padrão ID3v2.3 USLT (UTF-16)'
+                    )}
+                  </span>
+                  <span>
+                    {metadata.lyrics.length}{' '}
+                    {tr('caracteres', 'characters', 'caracteres')}
+                  </span>
                 </div>
               </div>
 
@@ -978,7 +1184,7 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   htmlFor="field-comment"
                   className="block text-xs text-slate-300 mb-1.5"
                 >
-                  Comentario embebido{' '}
+                  {tr('Comentario embebido', 'Embedded Comment', 'Comentário embutido')}{' '}
                   <span className="font-mono-tabular text-slate-400">(COMM)</span>
                 </label>
                 <input
@@ -986,7 +1192,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                   type="text"
                   value={metadata.comment}
                   onChange={(e) => handleFieldChange('comment', e.target.value)}
-                  placeholder="Notas de masterización o catálogo..."
+                  placeholder={tr(
+                    'Notas de masterización o catálogo...',
+                    'Mastering or catalog notes...',
+                    'Notas de masterização ou catálogo...'
+                  )}
                   className="w-full px-3.5 py-2 rounded-lg bg-[#090C12] border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--neon-primary)]"
                 />
               </div>
@@ -997,11 +1207,18 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
           <div className="lg:col-span-3 bg-[var(--surface-card)] neon-border-subtle rounded-xl p-6 flex flex-col justify-between gap-6">
             <div>
               <h2 className="text-sm font-semibold text-white mb-2">
-                Exportación del archivo MP3
+                {tr(
+                  'Exportación del archivo MP3',
+                  'MP3 File Export',
+                  'Exportação do arquivo MP3'
+                )}
               </h2>
               <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                Inyecta las etiquetas revisadas en la cabecera binaria ID3v2.3 sin
-                recodificar el flujo de audio original.
+                {tr(
+                  'Inyecta las etiquetas revisadas en la cabecera binaria ID3v2.3 sin recodificar el flujo de audio original.',
+                  'Injects the reviewed tags into the ID3v2.3 binary header without re-encoding the original audio stream.',
+                  'Injeta as tags revisadas no cabeçalho binário ID3v2.3 sem recodificar o fluxo de áudio original.'
+                )}
               </p>
 
               <button
@@ -1013,8 +1230,16 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                 <Download className="w-4 h-4 shrink-0" />
                 <span>
                   {isExporting
-                    ? 'Empaquetando MP3...'
-                    : 'Descargar MP3 con Metadatos'}
+                    ? tr(
+                        'Empaquetando MP3...',
+                        'Packaging MP3...',
+                        'Empacotando MP3...'
+                      )
+                    : tr(
+                        'Descargar MP3 con Metadatos',
+                        'Download Tagged MP3',
+                        'Baixar MP3 com Metadados'
+                      )}
                 </span>
               </button>
 
@@ -1032,11 +1257,28 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     <div className="pt-2 border-t border-white/10 font-mono-tabular text-[11px] text-slate-300 space-y-1">
                       <div className="flex items-center gap-1.5 neon-text font-semibold">
                         <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                        <span>Verificación post-escritura superada</span>
+                        <span>
+                          {tr(
+                            'Verificación post-escritura superada',
+                            'Post-write verification passed',
+                            'Verificação pós-escrita aprovada'
+                          )}
+                        </span>
                       </div>
                       <div>
-                        Cabecera re-leída: {postWriteReport.id3Version} (
-                        {postWriteReport.verifiedFramesCount} tramas verificadas)
+                        {tr(
+                          'Cabecera re-leída:',
+                          'Re-read header:',
+                          'Cabeçalho relido:'
+                        )}{' '}
+                        {postWriteReport.id3Version} (
+                        {postWriteReport.verifiedFramesCount}{' '}
+                        {tr(
+                          'tramas verificadas',
+                          'verified frames',
+                          'frames verificados'
+                        )}
+                        )
                       </div>
                       <div>
                         APIC: {postWriteReport.hasCoverArt ? 'OK' : 'No'} · USLT:{' '}
@@ -1059,10 +1301,15 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
               >
                 <div>
                   <span className="text-xs font-semibold text-white block">
-                    Inspector binario ID3v2.3
+                    {tr(
+                      'Inspector binario ID3v2.3',
+                      'ID3v2.3 Binary Inspector',
+                      'Inspetor binário ID3v2.3'
+                    )}
                   </span>
                   <span className="text-xs font-mono-tabular neon-text">
-                    Total cabecera: {(totalMetadataBytes / 1024).toFixed(1)} KB
+                    {tr('Total cabecera:', 'Total header:', 'Total cabeçalho:')}{' '}
+                    {(totalMetadataBytes / 1024).toFixed(1)} KB
                   </span>
                 </div>
                 <span className="text-slate-400">
@@ -1080,7 +1327,9 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                     <thead>
                       <tr className="border-b border-white/10 bg-[#090C12] text-xs text-slate-400">
                         <th className="py-2 px-2.5 font-medium">Frame</th>
-                        <th className="py-2 px-2.5 font-medium">Valor</th>
+                        <th className="py-2 px-2.5 font-medium">
+                          {tr('Valor', 'Value', 'Valor')}
+                        </th>
                         <th className="py-2 px-2.5 font-medium text-right">
                           Bytes
                         </th>
@@ -1093,7 +1342,11 @@ export const Mp3TaggerStudio: React.FC<Mp3TaggerStudioProps> = ({
                             colSpan={3}
                             className="py-6 px-3 text-center text-slate-400"
                           >
-                            Completa al menos un campo para generar tramas ID3v2.3.
+                            {tr(
+                              'Completa al menos un campo para generar tramas ID3v2.3.',
+                              'Fill in at least one field to generate ID3v2.3 frames.',
+                              'Preencha pelo menos um campo para gerar frames ID3v2.3.'
+                            )}
                           </td>
                         </tr>
                       ) : (
